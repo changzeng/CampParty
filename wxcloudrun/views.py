@@ -1,9 +1,15 @@
+import requests
+
 from datetime import datetime
 from flask import render_template, request
 from run import app
 from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter, update_counterbyid
 from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
+
+
+APPID = 'wx751ba538e01e40f6'
+SECRET = 'ee7eb9b1076e81941817e84d2f95a8db'
 
 
 @app.route('/')
@@ -66,8 +72,13 @@ def get_count():
     return make_succ_response(0) if counter is None else make_succ_response(counter.count)
 
 
-@app.route('/login', methods=['POST'])
-def login():
+@app.route('/get_session_info', methods=['POST'])
+def get_session_info():
     params = request.get_json()
-    print("login params: ", params)
-    return make_succ_response(0)
+    if 'code' not in params:
+        return make_err_response('缺少code参数')
+    code = params['code']
+    url = 'https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={2}&grant_type=authorization_code'.format(
+        APPID, SECRET, code)
+    rsp = requests.get(url)
+    return make_succ_response(rsp.text)
