@@ -18,7 +18,7 @@ REDIS_PORT = 6379
 REDIS_PWD = 'CAMPparty123456'
 redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PWD)
 SESSION_EXPIRE_TS = 24*3600
-UUID_PREFIX = 'session_id_'
+SESSION_ID_PREFIX = 'session_id_'
 
 
 @app.route('/')
@@ -98,12 +98,12 @@ def get_session_info():
         return make_err_response("session info missing field")
     openid = session_info_obj['openid']
     session_key = session_info_obj['session_key']
-    uuid = UUID_PREFIX + str(abs(hash(session_key + openid)))
-    redis_client.hset(uuid, mapping={"session_key": session_key, "openid": openid})
-    redis_client.expire(uuid, SESSION_EXPIRE_TS)
+    session_id = SESSION_ID_PREFIX + str(abs(hash(session_key + openid)))
+    redis_client.hset(session_id, mapping={"session_key": session_key, "openid": openid})
+    redis_client.expire(session_id, SESSION_EXPIRE_TS)
 
-    res_data = {"uuid": uuid}
-    if 'debug' in params and params['debug'].isdigit() and int(params['debug']) == 1:
+    res_data = {"session_id": session_id}
+    if 'debug' in params and (params['debug'] == 1 or (params['debug'].isdigit() and int(params['debug']) == 1)):
         res_data['openid'] = openid
         res_data['session_key'] = session_key
     return make_succ_response(res_data)
