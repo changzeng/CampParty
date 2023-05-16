@@ -1,20 +1,24 @@
+import json
 import redis
 import requests
-import base64
 
-from Crypto.Cipher import AES
 from datetime import datetime
 from flask import render_template, request
 from run import app
 from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter, update_counterbyid
 from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
+from wxcloudrun.utils import decrypt_data
 
 
 APPID = 'wx751ba538e01e40f6'
 SECRET = 'ee7eb9b1076e81941817e84d2f95a8db'
-
-# redis_client = redis.Redis(host='0.0.0.0', port=6379)
+REDIS_HOST = 'r-8vb77upzev9wod2p2dpd.redis.zhangbei.rds.aliyuncs.com'
+REDIS_PORT = 6379
+REDIS_PWD = 'CAMPparty123456'
+redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PWD)
+SESSION_EXPIRE_TS = 24*3600
+UUID_PREFIX = 'session_id_'
 
 
 @app.route('/')
@@ -86,27 +90,20 @@ def get_session_info():
     url = 'https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={2}&grant_type=authorization_code'.format(
         APPID, SECRET, code)
     rsp = requests.get(url)
-    return make_succ_response(rsp.text)
+    try:
+        session_info_obj = json.loads(rsp.text)
+    except:
+        return make_err_response("session info loads failed")
+    if 'session_key' not in session_info_obj or 'openid' not in session_info_obj:
+        return make_err_response("session info missing field")
+    openid = session_info_obj['openid']
+    session_key = session_info_obj['session_key']
+    uuid = UUID_PREFIX + str(abs(hash(session_key + openid)))
+    redis_client.hset(uuid, mapping={"session_key": session_key, "openid": openid})
+    redis_client.expire(uuid, SESSION_EXPIRE_TS)
 
-
-@app.route('/decrypt_data', methods=['POST'])
-def decrypt_data():
-    params = request.get_json()
-    if 'encryptedData' not in params:
-        return make_err_response('缺少encryptedData参数')
-    if 'iv' not in params:
-        return make_err_response('缺少iv参数')
-    if 'sessionKey' not in params:
-        return make_err_response('缺少sessionKey参数')
-    iv = params['iv']
-    session_key = params['sessionKey']
-    encrypted_data = params['encryptedData']
-
-    encrypted_data = base64.b64decode(encrypted_data)
-    iv = base64.b64decode(iv)
-    session_key = base64.b64decode(session_key)
-    cipher = AES.new(session_key, AES.MODE_CBC, iv)
-    decrypted = cipher.decrypt(encrypted_data)
-    result = decrypted[:-ord(decrypted[len(decrypted) - 1:])]
-    result = result.decode('utf8')
-    return make_succ_response(result)
+    res_data = {"uuid": uuid}
+    if 'debug' in params and params['debug'].isdigit() and int(params['debug']) == 1:
+        res_data['openid'] = openid
+        res_data['session_key'] = session_key
+    return make_succ_response(res_data)
