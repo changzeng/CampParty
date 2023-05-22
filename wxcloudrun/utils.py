@@ -15,5 +15,15 @@ def decrypt_data(encrypted_data, session_key, iv):
     return result
 
 
-def get_session_info(redis_client, uuid):
+def get_session_data(redis_client, uuid):
     return json.loads(redis_client.hgetall(uuid))
+
+
+def is_debug(params):
+    if 'debug' not in params:
+        return False
+    if params['debug'] == 1:
+        return True
+    if params['debug'] == '1':
+        return True
+    return False

@@ -3,7 +3,7 @@ import logging
 from sqlalchemy.exc import OperationalError
 
 from wxcloudrun import db
-from wxcloudrun.model import Counters
+from wxcloudrun.model import Counters, ActDetail
 
 # 初始化日志
 logger = logging.getLogger('log')
@@ -62,3 +62,16 @@ def update_counterbyid(counter):
         db.session.commit()
     except OperationalError as e:
         logger.info("update_counterbyid errorMsg= {} ".format(e))
+
+
+def query_all_act():
+    """
+    根据ID查询Counter实体
+    :param id: Counter的ID
+    :return: Counter实体
+    """
+    try:
+        return ActDetail.query.
+    except OperationalError as e:
+        logger.info("query_counterbyid errorMsg= {} ".format(e))
+        return None

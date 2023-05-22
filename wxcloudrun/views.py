@@ -2,13 +2,14 @@ import json
 import redis
 import requests
 
+import wxcloudrun.utils as utils
+
 from datetime import datetime
 from flask import render_template, request
 from run import app
 from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter, update_counterbyid
 from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
-from wxcloudrun.utils import decrypt_data
 
 
 APPID = 'wx751ba538e01e40f6'
@@ -102,8 +103,13 @@ def get_session_info():
     redis_client.hset(session_id, mapping={"session_key": session_key, "openid": openid})
     redis_client.expire(session_id, SESSION_EXPIRE_TS)
 
-    res_data = {"session_id": session_id}
-    if 'debug' in params and (params['debug'] == 1 or (params['debug'].isdigit() and int(params['debug']) == 1)):
+    res_data = {"sessionID": session_id}
+    if utils.is_debug(params):
         res_data['openid'] = openid
-        res_data['session_key'] = session_key
+        res_data['sessionKey'] = session_key
     return make_succ_response(res_data)
+
+
+@app.route('/list_all_rec_acts', methods=['POST'])
+def get_session_info():
+    pass
