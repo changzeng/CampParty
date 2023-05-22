@@ -4,6 +4,7 @@ from sqlalchemy.exc import OperationalError
 
 from wxcloudrun import db
 from wxcloudrun.model import Counters
+from wxcloudrun.model import ActDetail
 
 # 初始化日志
 logger = logging.getLogger('log')
@@ -72,7 +73,19 @@ def query_all_act():
     """
     try:
         # return ActDetail.query.
-        return []
+        return ActDetail.query.all()
     except OperationalError as e:
         logger.info("query_counterbyid errorMsg= {} ".format(e))
-        return None
+        return []
+    
+
+def insert_new_item(new_item):
+    """
+    插入一个实体
+    :param counter: 实体
+    """
+    try:
+        db.session.add(new_item)
+        db.session.commit()
+    except OperationalError as e:
+        logger.info("insert new_item errorMsg= {} ".format(e))

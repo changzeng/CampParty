@@ -6,8 +6,10 @@ import wxcloudrun.utils as utils
 
 from datetime import datetime
 from flask import render_template, request
+from flask import jsonify
 from run import app
 from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter, update_counterbyid
+from wxcloudrun.dao import query_all_act
 from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
 
@@ -112,4 +114,9 @@ def get_session_info():
 
 @app.route('/list_all_rec_acts', methods=['POST'])
 def list_all_rec_acts():
-    pass
+    try:
+        all_acts = query_all_act()
+        all_acts = [act.to_dict() for act in all_acts]
+        return make_succ_response(all_acts)
+    except:
+        return make_err_response("list all rec acts field")

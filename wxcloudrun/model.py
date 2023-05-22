@@ -41,3 +41,4 @@ class UserDetail(db.Model):
     age = db.Column(db.Integer, nullable=True)
     birth_day = db.Column(db.Date, nullable=True)
     name = db.Column(db.String, nullable=False)
+    phone_number = db.Column(db.String, nullable=False)
