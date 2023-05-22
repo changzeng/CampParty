@@ -114,9 +114,6 @@ def get_session_info():
 
 @app.route('/list_all_rec_acts', methods=['POST'])
 def list_all_rec_acts():
-    try:
-        all_acts = query_all_act()
-        all_acts = [act.to_dict() for act in all_acts]
-        return make_succ_response(all_acts)
-    except:
-        return make_err_response("list all rec acts field")
+    all_acts = query_all_act()
+    all_acts = [act.to_dict() for act in all_acts]
+    return make_succ_response(all_acts)
