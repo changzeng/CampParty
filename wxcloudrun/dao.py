@@ -3,7 +3,7 @@ import logging
 from sqlalchemy.exc import OperationalError
 
 from wxcloudrun import db
-from wxcloudrun.model import Counters, ActDetail
+from wxcloudrun.model import Counters
 
 # 初始化日志
 logger = logging.getLogger('log')
@@ -71,7 +71,8 @@ def query_all_act():
     :return: Counter实体
     """
     try:
-        return ActDetail.query.
+        # return ActDetail.query.
+        return []
     except OperationalError as e:
         logger.info("query_counterbyid errorMsg= {} ".format(e))
         return None

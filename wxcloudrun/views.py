@@ -111,5 +111,5 @@ def get_session_info():
 
 
 @app.route('/list_all_rec_acts', methods=['POST'])
-def get_session_info():
+def list_all_rec_acts():
     pass

@@ -17,7 +17,7 @@ class Counters(db.Model):
 
 class ActDetail(db.Model):
     # 设置结构体表格名称
-    __tablename__ = 'ActDetail'
+    __tablename__ = 'act_tetail'
 
     # 设定结构体对应表格的字段
     id = db.Column(db.Integer, primary_key=True)
@@ -27,15 +27,17 @@ class ActDetail(db.Model):
     price = db.Column(db.Integer, nullable=False)
     total_num = db.Column(db.Integer, nullable=False)
     cur_num = db.Column(db.Integer, nullable=True, default=0)
-    start_at = db.Column('startAt', db.TIMESTAMP, nullable=False, default=datetime.now())
-    end_at = db.Column('endAt', db.TIMESTAMP, nullable=False, default=datetime.now())
+    start_at = db.Column(db.DateTime, nullable=False)
+    end_at = db.Column(db.DateTime, nullable=False)
+    post_url = db.Column(db.text, nullable=True)
 
 
 class UserDetail(db.Model):
-    __tablename__ = 'HostDetail'
+    __tablename__ = 'user_detail'
     id = db.Column(db.Integer, primary_key=True)
     open_id = db.Column(db.String, nullable=False)
     avatar_url = db.Column(db.String, nullable=False)
     sex = db.Column(db.String, nullable=True)
     age = db.Column(db.Integer, nullable=True)
+    birth_day = db.Column(db.Date, nullable=True)
     name = db.Column(db.text, nullable=False)
