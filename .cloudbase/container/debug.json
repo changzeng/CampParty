@@ -4,7 +4,7 @@
       "name": "campparty",
       "domain": "",
       "ip": "",
-      "containerId": "e0f87d76a1cbbb926beced724d53135ae964c99097bc268b6d4065ddbb7a2661"
+      "containerId": "60082b0fa5444574c8ac165e1212c1f04f7088f74af9da4964d234862d7a9445"
     }
   ],
   "config": {
@@ -29,7 +29,7 @@
       "envParams": {
         "MYSQL_USERNAME": "root",
         "MYSQL_PASSWORD": "root",
-        "MYSQL_ADDRESS": "127.0.0.1"
+        "MYSQL_ADDRESS": "192.168.65.254"
       },
       "customLogs": "stdout",
       "initialDelaySeconds": 2,
