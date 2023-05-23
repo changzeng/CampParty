@@ -3,27 +3,6 @@ from datetime import datetime
 from wxcloudrun import db
 
 
-def db_obj_get_attr(model, obj, attr):
-    try:
-        if attr in model.attrs_set:
-            return eval('obj.{0}'.format(attr))
-    except:
-        return None
-    return None
-
-def db_obj_get_all_attrs(model, obj):
-    res = {}
-    try:
-        for attr in model.attrs_set:
-            val = db_obj_get_attr(model, obj, attr)
-            if val is None:
-                continue
-            res[attr] = val
-    except:
-        return {}
-    return res
-
-
 # 计数表
 class Counters(db.Model):
     # 设置结构体表格名称
