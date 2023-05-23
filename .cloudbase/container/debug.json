@@ -3,7 +3,8 @@
     {
       "name": "campparty",
       "domain": "",
-      "ip": ""
+      "ip": "",
+      "containerId": "2fb75853f90987e18690a8dc04b71402c0ceebb84694c7ddfae93f18db094052"
     }
   ],
   "config": {

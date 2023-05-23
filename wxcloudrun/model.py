@@ -3,6 +3,27 @@ from datetime import datetime
 from wxcloudrun import db
 
 
+def db_obj_get_attr(model, obj, attr):
+    try:
+        if attr in model.attrs_set:
+            return eval('obj.{0}'.format(attr))
+    except:
+        return None
+    return None
+
+def db_obj_get_all_attrs(model, obj):
+    res = {}
+    try:
+        for attr in model.attrs_set:
+            val = db_obj_get_attr(model, obj, attr)
+            if val is None:
+                continue
+            res[attr] = val
+    except:
+        return {}
+    return res
+
+
 # 计数表
 class Counters(db.Model):
     # 设置结构体表格名称
@@ -31,6 +52,8 @@ class ActDetail(db.Model):
     end_at = db.Column(db.DateTime, nullable=False)
     post_url = db.Column(db.String, nullable=True)
 
+    attrs_set = {'id', 'host_id', 'loc', 'name', 'price', 'total_num', 'cur_num', 'start_at', 'end_at', 'post_url'}
+
 
 class UserDetail(db.Model):
     __tablename__ = 'user_detail'
@@ -41,4 +64,6 @@ class UserDetail(db.Model):
     age = db.Column(db.Integer, nullable=True)
     birth_day = db.Column(db.Date, nullable=True)
     name = db.Column(db.String, nullable=False)
-    phone_number = db.Column(db.String, nullable=False)
+    phone_number = db.Column(db.String, nullable=True)
+
+    attrs_set = {'id', 'open_id', 'avatar_url', 'sex', 'age', 'birth_day', 'name', 'phone_number'}
