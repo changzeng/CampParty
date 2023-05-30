@@ -123,7 +123,7 @@ def list_all_rec_acts():
                 "hostID": item.host_id,
                 "loc": item.loc,
                 "name": item.name,
-                "price": item.price,
+                "price": float(item.price),
                 "totalNum": item.total_num,
                 "curNum": item.cur_num,
                 "startAt": item.start_at,
