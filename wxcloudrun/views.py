@@ -128,7 +128,8 @@ def list_all_rec_acts():
                 "curNum": item.cur_num,
                 "startAt": item.start_at.strftime("%Y%m%d %H:%M:%S"),
                 "endAt": item.end_at.strftime("%Y%m%d %H:%M:%S"),
-                "post_url": item.post_url
+                "postUrl": item.post_url,
+                "shortCutUrl": item.short_cut_url
             })
         return res
     return make_succ_response(make_resp(all_valid_acts))

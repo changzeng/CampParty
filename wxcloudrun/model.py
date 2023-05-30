@@ -17,7 +17,7 @@ class Counters(db.Model):
 
 class ActDetail(db.Model):
     # 设置结构体表格名称
-    __tablename__ = 'act_tetail'
+    __tablename__ = 'act_detail'
 
     # 设定结构体对应表格的字段
     id = db.Column(db.Integer, primary_key=True)
@@ -31,6 +31,7 @@ class ActDetail(db.Model):
     end_at = db.Column(db.DateTime, nullable=False)
     post_url = db.Column(db.String, nullable=True)
     status = db.Column(db.Integer, nullable=False, default=0)
+    short_cut_url = db.Column(db.String, nullable=False)
 
 class UserDetail(db.Model):
     __tablename__ = 'user_detail'
