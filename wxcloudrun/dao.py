@@ -65,6 +65,15 @@ def update_counterbyid(counter):
         logger.info("update_counterbyid errorMsg= {} ".format(e))
 
 
+def query_all_valid_act():
+    try:
+        return ActDetail.query.filter(ActDetail.status == 1)
+    except OperationalError as e:
+        logger.info("query_all_valid_act errorMsg= {} ".format(e))
+        return None
+    return []
+
+
 def query_all_act():
     """
     根据ID查询Counter实体
@@ -72,11 +81,11 @@ def query_all_act():
     :return: Counter实体
     """
     try:
-        # return ActDetail.query.
         return ActDetail.query.all()
     except OperationalError as e:
         logger.info("query_counterbyid errorMsg= {} ".format(e))
         return []
+    return []
     
 
 def insert_new_item(new_item):
