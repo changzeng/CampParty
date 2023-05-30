@@ -9,7 +9,7 @@ from flask import render_template, request
 from flask import jsonify
 from run import app
 from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter, update_counterbyid
-from wxcloudrun.dao import query_all_valid_act
+from wxcloudrun.dao import query_all_valid_act, query_act_by_id
 from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
 
@@ -112,24 +112,39 @@ def get_session_info():
     return make_succ_response(res_data)
 
 
+def convert_act_detail_info(item):
+    return {
+        "id": item.id,
+        "hostID": item.host_id,
+        "loc": item.loc,
+        "name": item.name,
+        "price": float(item.price),
+        "totalNum": item.total_num,
+        "curNum": item.cur_num,
+        "startAt": item.start_at.strftime("%Y%m%d %H:%M:%S"),
+        "endAt": item.end_at.strftime("%Y%m%d %H:%M:%S"),
+        "postUrl": item.post_url,
+        "shortCutUrl": item.short_cut_url
+    }
+
+
 @app.route('/list_all_rec_acts', methods=['POST'])
 def list_all_rec_acts():
     all_valid_acts = query_all_valid_act()
     def make_resp(_input):
         res = []
         for item in _input:
-            res.append({
-                "id": item.id,
-                "hostID": item.host_id,
-                "loc": item.loc,
-                "name": item.name,
-                "price": float(item.price),
-                "totalNum": item.total_num,
-                "curNum": item.cur_num,
-                "startAt": item.start_at.strftime("%Y%m%d %H:%M:%S"),
-                "endAt": item.end_at.strftime("%Y%m%d %H:%M:%S"),
-                "postUrl": item.post_url,
-                "shortCutUrl": item.short_cut_url
-            })
+            res.append(convert_act_detail_info(item))
         return res
     return make_succ_response(make_resp(all_valid_acts))
+
+
+@app.route('/get_act_detail', methods=['POST'])
+def get_act_detail():
+    params = request.get_json()
+    if 'id' not in params:
+        return make_err_response("missing id field")
+    act_detail = query_act_by_id(int(params['id']))
+    if act_detail is None:
+        return make_err_response("act detail missing")
+    return make_succ_response(convert_act_detail_info(act_detail))

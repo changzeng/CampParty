@@ -70,8 +70,19 @@ def query_all_valid_act():
         return ActDetail.query.filter(ActDetail.status == 1)
     except OperationalError as e:
         logger.info("query_all_valid_act errorMsg= {} ".format(e))
-        return None
     return []
+
+
+def query_act_by_id(id):
+    try:
+        actList = ActDetail.query.filter(ActDetail.id == id)
+        actList = list(actList)
+        if len(actList) >= 1:
+            return actList[0]
+        return None
+    except Exception as e:
+        logger.info("query_act_by_id errorMsg= {} ".format(e))
+    return None
 
 
 def query_all_act():
