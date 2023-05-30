@@ -126,8 +126,8 @@ def list_all_rec_acts():
                 "price": float(item.price),
                 "totalNum": item.total_num,
                 "curNum": item.cur_num,
-                "startAt": item.start_at,
-                "endAt": item.end_at,
+                "startAt": item.start_at.strftime("%Y%m%d %H:%M:%S"),
+                "endAt": item.end_at.strftime("%Y%m%d %H:%M:%S"),
                 "post_url": item.post_url
             })
         return res
