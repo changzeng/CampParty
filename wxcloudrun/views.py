@@ -10,7 +10,7 @@ from flask import jsonify
 from run import app
 from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter, update_counterbyid
 from wxcloudrun.dao import query_all_valid_act
-from wxcloudrun.model import Counters, ActDetail
+from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
 
 
@@ -114,24 +114,21 @@ def get_session_info():
 
 @app.route('/list_all_rec_acts', methods=['POST'])
 def list_all_rec_acts():
-    try:
-        all_valid_acts = query_all_valid_act()
-        def make_resp(_input):
-            res = []
-            for item in _input:
-                res.append({
-                    "id": item.id,
-                    "hostID": item.host_id,
-                    "loc": item.loc,
-                    "name": item.name,
-                    "price": item.price,
-                    "totalNum": item.total_num,
-                    "curNum": item.cur_num,
-                    "startAt": item.start_at,
-                    "endAt": item.end_at,
-                    "post_url": item.post_url
-                })
-            return res
-        return make_succ_response(make_resp(all_valid_acts))
-    except:
-        pass
+    all_valid_acts = query_all_valid_act()
+    def make_resp(_input):
+        res = []
+        for item in _input:
+            res.append({
+                "id": item.id,
+                "hostID": item.host_id,
+                "loc": item.loc,
+                "name": item.name,
+                "price": item.price,
+                "totalNum": item.total_num,
+                "curNum": item.cur_num,
+                "startAt": item.start_at,
+                "endAt": item.end_at,
+                "post_url": item.post_url
+            })
+        return res
+    return make_succ_response(make_resp(all_valid_acts))
