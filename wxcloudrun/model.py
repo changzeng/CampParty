@@ -30,9 +30,7 @@ class ActDetail(db.Model):
     start_at = db.Column(db.DateTime, nullable=False)
     end_at = db.Column(db.DateTime, nullable=False)
     post_url = db.Column(db.String, nullable=True)
-
-    attrs_set = {'id', 'host_id', 'loc', 'name', 'price', 'total_num', 'cur_num', 'start_at', 'end_at', 'post_url'}
-
+    status = db.Column(db.Integer, nullable=False, default=0)
 
 class UserDetail(db.Model):
     __tablename__ = 'user_detail'
@@ -44,5 +42,3 @@ class UserDetail(db.Model):
     birth_day = db.Column(db.Date, nullable=True)
     name = db.Column(db.String, nullable=False)
     phone_number = db.Column(db.String, nullable=True)
-
-    attrs_set = {'id', 'open_id', 'avatar_url', 'sex', 'age', 'birth_day', 'name', 'phone_number'}

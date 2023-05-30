@@ -98,25 +98,3 @@ def insert_new_item(new_item):
         db.session.commit()
     except OperationalError as e:
         logger.info("insert new_item errorMsg= {} ".format(e))
-
-
-def db_obj_get_attr(model, obj, attr):
-    try:
-        if attr in model.attrs_set:
-            return eval('obj.{0}'.format(attr))
-    except:
-        return None
-    return None
-
-
-def db_obj_get_all_attrs(model, obj):
-    res = {}
-    try:
-        for attr in model.attrs_set:
-            val = db_obj_get_attr(model, obj, attr)
-            if val is None:
-                continue
-            res[attr] = val
-    except:
-        return {}
-    return res
