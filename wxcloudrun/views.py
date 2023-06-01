@@ -86,7 +86,7 @@ def get_count():
     return make_succ_response(0) if counter is None else make_succ_response(counter.count)
 
 
-def make_session_info_dict(user_info):
+def make_user_info_dict(user_info):
     res = {}
     if user_info.open_id is not None:
         res['open_id'] = user_info.open_id
@@ -136,7 +136,7 @@ def get_session_info():
             return make_err_response("insert user detail faild")
         user_info = query_user_by_open_id(open_id)
     else:
-        session_info_dict = make_session_info_dict(user_info)
+        session_info_dict = make_user_info_dict(user_info)
     session_info_dict['session_key'] = session_key
     session_info_dict['open_id'] = open_id
 
@@ -253,6 +253,39 @@ def check_user_phone():
     return make_succ_response(0)
 
 
+def make_orders_act_join_res_dict(orders_act_join_res):
+    res = []
+    for order, act_detail in orders_act_join_res:
+        res_item = {}
+        if order.id is not None:
+            res_item['id'] = order.id
+        if order.user_id is not None:
+            res_item['userID'] = order.user_id
+        if order.act_id is not None:
+            res_item['actID'] = order.act_id
+        if order.created_at is not None:
+            res_item['createdAt'] = order.created_at.strftime("%Y%m%d %H:%M:%S")
+        if order.status is not None:
+            res_item['status'] = order.status
+        if order.amount is not None:
+            res_item['amount'] = float(order.amount)
+        if order.count is not None:
+            res_item['count'] = order.count
+        if act_detail.start_at is not None:
+            res_item['actStartAt'] = act_detail.start_at
+        if act_detail.status is not None:
+            res_item['actStatus'] = act_detail.status
+        if act_detail.short_cut_url is not None:
+            res_item['actShortCutUrl'] = act_detail.short_cut_url
+        if act_detail.name is not None:
+            res_item['actName'] = act_detail.name
+        if act_detail.loc is not None:
+            res_item['actLoc'] = act_detail.loc
+        
+        res.append(res_item)
+    return res
+
+
 @app.route('/get_user_profile', methods=['POST'])
 def get_user_profile():
     params = request.get_json()
@@ -265,8 +298,8 @@ def get_user_profile():
     orders_list = query_orders_by_user_id(user_id)
 
     res = {
-        "userInfo": user_info,
-        "ordersList": orders_list
+        "userInfo": make_user_info_dict(user_info),
+        "ordersList": make_orders_act_join_res_dict(orders_list)
     }
 
     return make_succ_response(res)
