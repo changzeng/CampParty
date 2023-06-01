@@ -58,4 +58,6 @@ class ActOrders(db.Model):
     user_id = db.Column(db.Integer, nullable=False)
     act_id = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now())
+    status = db.Column(db.Integer, nullable=False, default=0)
     amount = db.Column(db.Numeric(precision=10, scale=2, asdecimal=True), default=Decimal('0.00'), nullable=False)
+    count = db.Column(db.Integer, nullable=False, default=1)

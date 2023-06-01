@@ -6,6 +6,7 @@ from wxcloudrun import db
 from wxcloudrun.model import Counters
 from wxcloudrun.model import ActDetail
 from wxcloudrun.model import UserDetail
+from wxcloudrun.model import ActOrders
 
 # 初始化日志
 logger = logging.getLogger('log')
@@ -155,4 +156,48 @@ def insert_user_detail(user_detail_info):
     # except OperationalError as e:
     #     logger.info("insert_new_entity errorMsg= {} ".format(e))
     # return False
+
+
+def query_user_by_id(id):
+    try:
+        actList = UserDetail.query.filter(UserDetail.id == id)
+        actList = list(actList)
+        if len(actList) >= 1:
+            return actList[0]
+        return None
+    except Exception as e:
+        logger.info("query_user_by_id errorMsg= {} ".format(e))
+    return None
+
+
+def convert_orders_act_join_res(orders_act_join_res):
+    res = []
+    for order, act_detail in orders_act_join_res:
+        res_item = {}
+        if order.id is not None:
+            res_item['id'] = order.id
+        if order.user_id is not None:
+            res_item['userID'] = order.user_id
+        if order.act_id is not None:
+            res_item['actID'] = order.act_id
+        if order.created_at is not None:
+            res_item['createdAt'] = order.created_at.strftime("%Y%m%d %H:%M:%S")
+        if order.status is not None:
+            res_item['status'] = order.status
+        if order.amount is not None:
+            res_item['amount'] = float(order.amount)
+        if order.count is not None:
+            res_item['count'] = order.count
+        
+        res.append(res_item)
+    return res
+
+
+def query_orders_by_user_id(user_id):
+    try:
+        orders_act_join_res = ActOrders.query.filter(ActOrders.user_id == user_id).join(UserDetail, ActOrders.user_id == UserDetail.id).order_by(ActOrders.created_at.desc()).limit(10).all()
+        return list(ordersList)
+    except Exception as e:
+        logger.info("query_user_by_id errorMsg= {} ".format(e))
+    return []
     
