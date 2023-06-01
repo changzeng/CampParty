@@ -85,12 +85,6 @@ def get_count():
     return make_succ_response(0) if counter is None else make_succ_response(counter.count)
 
 
-def dict_get_default(_dict, _key, _default_val):
-    if _key not in _dict:
-        return _default_val
-    return _dict[_key]
-
-
 @app.route('/get_session_info', methods=['POST'])
 def get_session_info():
     params = request.get_json()
@@ -116,13 +110,7 @@ def get_session_info():
     session_info_dict = {}
     if user_info is None:
         session_info_dict = {
-            "open_id": open_id,
-            "avatar_url": dict_get_default(params, 'avatar_url', ''),
-            "city": dict_get_default(params, 'city', ''),
-            "country": dict_get_default(params, 'country', ''),
-            "gender": dict_get_default(params, 'gender', ''),
-            "language": dict_get_default(params, 'language', ''),
-            "nick_name": dict_get_default(params, 'nick_name', '')
+            "open_id": open_id
         }
         if insert_user_detail(session_info_dict) == False:
             return make_err_response("insert user detail faild")
@@ -134,7 +122,8 @@ def get_session_info():
             "country": user_info.country,
             "gender": user_info.gender,
             "language": user_info.language,
-            "nick_name": user_info.nick_name
+            "nick_name": user_info.nick_name,
+            'phone_number': user_info.phone_number
         }
     session_info_dict['session_key'] = session_key
     session_info_dict['open_id'] = open_id

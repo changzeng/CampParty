@@ -27,3 +27,9 @@ def is_debug(params):
     if params['debug'] == '1':
         return True
     return False
+
+
+def dict_get_default(_dict, _key, _default_val):
+    if _key not in _dict:
+        return _default_val
+    return _dict[_key]

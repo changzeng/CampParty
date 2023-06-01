@@ -130,13 +130,20 @@ def insert_user_detail(user_detail_info):
     """
     # try:
     user_detal = UserDetail()
-    user_detal.open_id = user_detail_info['open_id']
-    user_detal.avatar_url = user_detail_info['avatar_url']
-    user_detal.city = user_detail_info['city']
-    user_detal.country = user_detail_info['country']
-    user_detal.gender = user_detail_info['gender']
-    user_detal.language = user_detail_info['language']
-    user_detal.nick_name = user_detail_info['nick_name']
+    if 'open_id' in user_detail_info:
+        user_detal.open_id = user_detail_info['open_id']
+    if 'avatar_url' in user_detail_info:
+        user_detal.avatar_url = user_detail_info['avatar_url']
+    if 'city' in user_detail_info:
+        user_detal.city = user_detail_info['city']
+    if 'country' in user_detail_info:
+        user_detal.country = user_detail_info['country']
+    if 'gender' in user_detail_info:
+        user_detal.gender = user_detail_info['gender']
+    if 'language' in user_detail_info:
+        user_detal.language = user_detail_info['language']
+    if 'nick_name' in user_detail_info:
+        user_detal.nick_name = user_detail_info['nick_name']
 
     db.session.add(user_detal)
     db.session.commit()
