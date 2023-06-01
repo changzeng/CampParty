@@ -128,20 +128,20 @@ def insert_user_detail(user_detail_info):
     """
     插入一个新的实体
     """
-    try:
-        user_detal = UserDetail()
-        user_detal.open_id = user_detail_info['open_id']
-        user_detal.avatar_url = user_detail_info['avatar_url']
-        user_detal.city = user_detail_info['city']
-        user_detal.country = user_detail_info['country']
-        user_detal.gender = user_detail_info['gender']
-        user_detal.language = user_detail_info['language']
-        user_detal.nick_name = user_detail_info['nick_name']
-    
-        db.session.add(user_detal)
-        db.session.commit()
-        return True
-    except OperationalError as e:
-        logger.info("insert_new_entity errorMsg= {} ".format(e))
-    return False
+    # try:
+    user_detal = UserDetail()
+    user_detal.open_id = user_detail_info['open_id']
+    user_detal.avatar_url = user_detail_info['avatar_url']
+    user_detal.city = user_detail_info['city']
+    user_detal.country = user_detail_info['country']
+    user_detal.gender = user_detail_info['gender']
+    user_detal.language = user_detail_info['language']
+    user_detal.nick_name = user_detail_info['nick_name']
+
+    db.session.add(user_detal)
+    db.session.commit()
+    return True
+    # except OperationalError as e:
+    #     logger.info("insert_new_entity errorMsg= {} ".format(e))
+    # return False
     
