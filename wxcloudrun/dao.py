@@ -134,6 +134,8 @@ def insert_user_detail(user_detail_info):
         user_detal.open_id = user_detail_info['open_id']
     if 'avatar_url' in user_detail_info:
         user_detal.avatar_url = user_detail_info['avatar_url']
+    else:
+        user_detal.avatar_url = 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132'
     if 'city' in user_detail_info:
         user_detal.city = user_detail_info['city']
     if 'country' in user_detail_info:
@@ -144,6 +146,8 @@ def insert_user_detail(user_detail_info):
         user_detal.language = user_detail_info['language']
     if 'nickname' in user_detail_info:
         user_detal.nickname = user_detail_info['nickname']
+    else:
+        user_detal.nickname = '微信用户'
 
     db.session.add(user_detal)
     db.session.commit()

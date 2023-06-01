@@ -133,6 +133,7 @@ def get_session_info():
         }
         if insert_user_detail(session_info_dict) == False:
             return make_err_response("insert user detail faild")
+        user_info = query_user_by_open_id(open_id)
     else:
         session_info_dict = make_session_info_dict(user_info)
     session_info_dict['session_key'] = session_key
@@ -141,7 +142,7 @@ def get_session_info():
     redis_client.hset(session_id, mapping=session_info_dict)
     redis_client.expire(session_id, SESSION_EXPIRE_TS)
 
-    res_data = {"sessionID": session_id}
+    res_data = {"sessionID": session_id, "userID": user_info.id}
     if utils.is_debug(params):
         res_data['openid'] = open_id
         res_data['sessionKey'] = session_key
