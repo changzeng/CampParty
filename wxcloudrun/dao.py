@@ -188,6 +188,16 @@ def convert_orders_act_join_res(orders_act_join_res):
             res_item['amount'] = float(order.amount)
         if order.count is not None:
             res_item['count'] = order.count
+        if act_detail.start_at is not None:
+            res_item['actStartAt'] = act_detail.start_at
+        if act_detail.status is not None:
+            res_item['actStatus'] = act_detail.status
+        if act_detail.short_cut_url is not None:
+            res_item['actShortCutUrl'] = act_detail.short_cut_url
+        if act_detail.name is not None:
+            res_item['actName'] = act_detail.name
+        if act_detail.loc is not None:
+            res_item['actLoc'] = act_detail.loc
         
         res.append(res_item)
     return res
@@ -196,7 +206,7 @@ def convert_orders_act_join_res(orders_act_join_res):
 def query_orders_by_user_id(user_id):
     try:
         orders_act_join_res = ActOrders.query.filter(ActOrders.user_id == user_id).join(UserDetail, ActOrders.user_id == UserDetail.id).order_by(ActOrders.created_at.desc()).limit(10).all()
-        return list(ordersList)
+        return convert_orders_act_join_res(list(orders_act_join_res))
     except Exception as e:
         logger.info("query_user_by_id errorMsg= {} ".format(e))
     return []
