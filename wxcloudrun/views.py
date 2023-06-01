@@ -90,8 +90,6 @@ def get_session_info():
     params = request.get_json()
     if 'code' not in params:
         return make_err_response('缺少code参数')
-    if 'avatar_url' not in params:
-        return make_err_response('缺少avatar_url参数')
     code = params['code']
     url = 'https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={2}&grant_type=authorization_code'.format(
         APPID, SECRET, code)
