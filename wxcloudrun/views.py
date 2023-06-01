@@ -85,6 +85,27 @@ def get_count():
     return make_succ_response(0) if counter is None else make_succ_response(counter.count)
 
 
+def make_session_info_dict(user_info):
+    res = {}
+    if user_info.open_id is not None:
+        res['open_id'] = user_info.open_id
+    if user_info.avatar_url is not None:
+        res['avatar_url'] = user_info.avatar_url
+    if user_info.city is not None:
+        res['city'] = user_info.city
+    if user_info.country is not None:
+        res['country'] = user_info.country
+    if user_info.gender is not None:
+        res['gender'] = user_info.gender
+    if user_info.language is not None:
+        res['language'] = user_info.language
+    if user_info.nickname is not None:
+        res['nickname'] = user_info.nickname
+    if user_info.phone_number is not None:
+        res['phone_number'] = user_info.phone_number
+    return res
+
+
 @app.route('/get_session_info', methods=['POST'])
 def get_session_info():
     params = request.get_json()
@@ -113,16 +134,7 @@ def get_session_info():
         if insert_user_detail(session_info_dict) == False:
             return make_err_response("insert user detail faild")
     else:
-        session_info_dict = {
-            "open_id": user_info.open_id,
-            "avatar_url": user_info.avatar_url,
-            "city": user_info.city,
-            "country": user_info.country,
-            "gender": user_info.gender,
-            "language": user_info.language,
-            "nickname": user_info.nickname,
-            'phone_number': user_info.phone_number
-        }
+        session_info_dict = make_session_info_dict(user_info)
     session_info_dict['session_key'] = session_key
     session_info_dict['open_id'] = open_id
 
