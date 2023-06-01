@@ -5,6 +5,7 @@ from sqlalchemy.exc import OperationalError
 from wxcloudrun import db
 from wxcloudrun.model import Counters
 from wxcloudrun.model import ActDetail
+from wxcloudrun.model import UserDetail
 
 # 初始化日志
 logger = logging.getLogger('log')
@@ -109,3 +110,38 @@ def insert_new_item(new_item):
         db.session.commit()
     except OperationalError as e:
         logger.info("insert new_item errorMsg= {} ".format(e))
+
+
+def query_user_by_open_id(open_id):
+    try:
+        actList = UserDetail.query.filter(UserDetail.open_id == open_id)
+        actList = list(actList)
+        if len(actList) >= 1:
+            return actList[0]
+        return None
+    except Exception as e:
+        logger.info("query_user_by_open_id errorMsg= {} ".format(e))
+    return None
+
+
+def insert_user_detail(user_detail_info):
+    """
+    插入一个新的实体
+    """
+    try:
+        user_detal = UserDetail()
+        user_detal.open_id = user_detail_info['open_id']
+        user_detal.avatar_url = user_detail_info['avatar_url']
+        user_detal.city = user_detail_info['city']
+        user_detal.country = user_detail_info['country']
+        user_detal.gender = user_detail_info['gender']
+        user_detal.language = user_detail_info['language']
+        user_detal.nick_name = user_detail_info['nick_name']
+    
+        db.session.add(user_detal)
+        db.session.commit()
+        return True
+    except OperationalError as e:
+        logger.info("insert_new_entity errorMsg= {} ".format(e))
+    return False
+    

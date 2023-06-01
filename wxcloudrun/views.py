@@ -1,3 +1,4 @@
+import re
 import json
 import redis
 import requests
@@ -9,7 +10,7 @@ from flask import render_template, request
 from flask import jsonify
 from run import app
 from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter, update_counterbyid
-from wxcloudrun.dao import query_all_valid_act, query_act_by_id
+from wxcloudrun.dao import query_all_valid_act, query_act_by_id, query_user_by_open_id, insert_user_detail
 from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
 
@@ -20,7 +21,7 @@ REDIS_HOST = 'r-8vb77upzev9wod2p2dpd.redis.zhangbei.rds.aliyuncs.com'
 REDIS_PORT = 6379
 REDIS_PWD = 'CAMPparty123456'
 redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PWD)
-SESSION_EXPIRE_TS = 24*3600
+SESSION_EXPIRE_TS = 2*7*24*3600
 SESSION_ID_PREFIX = 'session_id_'
 
 
@@ -84,11 +85,19 @@ def get_count():
     return make_succ_response(0) if counter is None else make_succ_response(counter.count)
 
 
+def dict_get_default(_dict, _key, _default_val):
+    if _key not in _dict:
+        return _default_val
+    return _dict[_key]
+
+
 @app.route('/get_session_info', methods=['POST'])
 def get_session_info():
     params = request.get_json()
     if 'code' not in params:
         return make_err_response('缺少code参数')
+    if 'avatar_url' not in params:
+        return make_err_response('缺少avatar_url参数')
     code = params['code']
     url = 'https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={2}&grant_type=authorization_code'.format(
         APPID, SECRET, code)
@@ -99,15 +108,43 @@ def get_session_info():
         return make_err_response("session info loads failed")
     if 'session_key' not in session_info_obj or 'openid' not in session_info_obj:
         return make_err_response("session info missing field")
-    openid = session_info_obj['openid']
+    open_id = session_info_obj['openid']
     session_key = session_info_obj['session_key']
-    session_id = SESSION_ID_PREFIX + str(abs(hash(session_key + openid)))
-    redis_client.hset(session_id, mapping={"session_key": session_key, "openid": openid})
+    session_id = SESSION_ID_PREFIX + str(abs(hash(session_key + open_id)))
+
+    user_info = query_user_by_open_id(open_id)
+    session_info_dict = {}
+    if user_info is None:
+        session_info_dict = {
+            "open_id": open_id,
+            "avatar_url": dict_get_default(params, 'avatar_url', ''),
+            "city": dict_get_default(params, 'city', ''),
+            "country": dict_get_default(params, 'country', ''),
+            "gender": dict_get_default(params, 'gender', ''),
+            "language": dict_get_default(params, 'language', ''),
+            "nick_name": dict_get_default(params, 'nick_name', '')
+        }
+        if insert_user_detail(session_info_dict) == False:
+            return make_err_response("insert user detail faild")
+    else:
+        session_info_dict = {
+            "open_id": user_info.open_id,
+            "avatar_url": user_info.avatar_url,
+            "city": user_info.city,
+            "country": user_info.country,
+            "gender": user_info.gender,
+            "language": user_info.language,
+            "nick_name": user_info.nick_name
+        }
+    session_info_dict['session_key'] = session_key
+    session_info_dict['open_id'] = open_id
+
+    redis_client.hset(session_id, mapping=session_info_dict)
     redis_client.expire(session_id, SESSION_EXPIRE_TS)
 
     res_data = {"sessionID": session_id}
     if utils.is_debug(params):
-        res_data['openid'] = openid
+        res_data['openid'] = open_id
         res_data['sessionKey'] = session_key
     return make_succ_response(res_data)
 
@@ -124,7 +161,8 @@ def convert_act_detail_info(item):
         "startAt": item.start_at.strftime("%Y%m%d %H:%M:%S"),
         "endAt": item.end_at.strftime("%Y%m%d %H:%M:%S"),
         "postUrl": item.post_url,
-        "shortCutUrl": item.short_cut_url
+        "shortCutUrl": item.short_cut_url,
+        "status": item.status
     }
 
 
@@ -148,3 +186,65 @@ def get_act_detail():
     if act_detail is None:
         return make_err_response("act detail missing")
     return make_succ_response(convert_act_detail_info(act_detail))
+
+
+def check_valid_phone_number(phone):
+    pattern = re.compile(r'^1[3-9]\d{9}$')
+    match = pattern.match(phone)
+    return match is not None
+
+
+@app.route('/send_phone_code', methods=['POST'])
+def send_phone_code():
+    params = request.get_json()
+    if 'phone' not in params:
+        return make_err_response("missing phone field")
+    if 'session_id' not in params:
+        return make_err_response("missing session_id field")
+    session_id = params['session_id']
+    phone = params['phone']
+    if not check_valid_phone_number(phone):
+        return make_err_response("invalid phone number")
+    phone_validation_code = "123"
+    redis_client.hset(session_id, mapping={'phone': phone, 'phone_validation_code': phone_validation_code})
+    redis_client.expire(session_id, SESSION_EXPIRE_TS)
+
+
+@app.route('/put_user_phone', methods=['POST'])
+def put_user_phone():
+    params = request.get_json()
+    if 'phone_validation_code' not in params:
+        return make_err_response("missing phone_validation_code field")
+    if 'session_id' not in params:
+        return make_err_response("missing session_id field")
+    
+    session_id = params['session_id']
+    phone_validation_code = params['phone_validation_code']
+
+    session_data = redis_client.hgetall(session_id)
+    if 'phone' not in session_data:
+        return make_err_response("session data missing phone field")
+    if 'phone_validation_code' not in session_data:
+        return make_err_response("session data missing phone_validation_code field")
+    server_phone_validation_code = session_data['phone_validation_code']
+
+    if str(server_phone_validation_code) == str(phone_validation_code):
+        return make_succ_response(1)
+    return make_succ_response(0)
+
+
+@app.route('/check_user_phone', methods=['POST'])
+def check_user_phone():
+    params = request.get_json()
+    if 'session_id' not in params:
+        return make_err_response("missing session_id field")
+    session_id = params['params']
+    session_data = redis_client.hgetall(session_id)
+    if 'open_id' not in session_data:
+        return make_err_response("session data missing open_id field")
+    open_id = session_data['open_id']
+    user_info = query_user_by_open_id(open_id)
+    if user_info is None:
+        return make_err_response("user does not exists")
+    
+    

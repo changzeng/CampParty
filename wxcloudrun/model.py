@@ -1,3 +1,4 @@
+from decimal import Decimal
 from datetime import datetime
 
 from wxcloudrun import db
@@ -35,11 +36,26 @@ class ActDetail(db.Model):
 
 class UserDetail(db.Model):
     __tablename__ = 'user_detail'
+
     id = db.Column(db.Integer, primary_key=True)
     open_id = db.Column(db.String, nullable=False)
     avatar_url = db.Column(db.String, nullable=False)
-    sex = db.Column(db.String, nullable=True)
-    age = db.Column(db.Integer, nullable=True)
+    city = db.Column(db.String, nullable=True)
+    country = db.Column(db.String, nullable=True)
+    gender = db.Column(db.String, nullable=True)
+    language = db.Column(db.String, nullable=True)
+    nickname = db.Column(db.String, nullable=False)
     birth_day = db.Column(db.Date, nullable=True)
-    name = db.Column(db.String, nullable=False)
+    name = db.Column(db.String, nullable=True)
     phone_number = db.Column(db.String, nullable=True)
+
+
+class ActOrders(db.Model):
+    __tablename__ = 'orders'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(db.Integer, nullable=False)
+    act_id = db.Column(db.Integer, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now())
+    amount = db.Column(db.Numeric(precision=10, scale=2, asdecimal=True), default=Decimal('0.00'), nullable=False)
