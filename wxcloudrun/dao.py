@@ -142,8 +142,8 @@ def insert_user_detail(user_detail_info):
         user_detal.gender = user_detail_info['gender']
     if 'language' in user_detail_info:
         user_detal.language = user_detail_info['language']
-    if 'nick_name' in user_detail_info:
-        user_detal.nick_name = user_detail_info['nick_name']
+    if 'nickname' in user_detail_info:
+        user_detal.nickname = user_detail_info['nickname']
 
     db.session.add(user_detal)
     db.session.commit()

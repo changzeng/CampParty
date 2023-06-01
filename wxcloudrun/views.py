@@ -120,7 +120,7 @@ def get_session_info():
             "country": user_info.country,
             "gender": user_info.gender,
             "language": user_info.language,
-            "nick_name": user_info.nick_name,
+            "nickname": user_info.nickname,
             'phone_number': user_info.phone_number
         }
     session_info_dict['session_key'] = session_key
