@@ -246,5 +246,8 @@ def check_user_phone():
     user_info = query_user_by_open_id(open_id)
     if user_info is None:
         return make_err_response("user does not exists")
-    
+    phone = user_info.phone_number
+    if check_valid_phone_number(phone):
+        return make_succ_response(1)
+    return make_succ_response(0)
     
