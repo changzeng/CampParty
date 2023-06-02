@@ -1,8 +1,7 @@
 import logging
-import datetime
 
 from sqlalchemy.exc import OperationalError
-
+from datetime import datetime
 from wxcloudrun import db
 from wxcloudrun.model import Counters
 from wxcloudrun.model import ActDetail
