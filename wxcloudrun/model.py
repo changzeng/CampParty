@@ -48,6 +48,7 @@ class UserDetail(db.Model):
     birth_day = db.Column(db.Date, nullable=True)
     name = db.Column(db.String, nullable=True)
     phone_number = db.Column(db.String, nullable=True)
+    register_at = db.Column(db.DateTime, nullable=False, default=datetime.now())
 
 
 class ActOrders(db.Model):

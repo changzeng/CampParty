@@ -1,4 +1,5 @@
 import logging
+import datetime
 
 from sqlalchemy.exc import OperationalError
 
@@ -149,6 +150,7 @@ def insert_user_detail(user_detail_info):
         user_detal.nickname = user_detail_info['nickname']
     else:
         user_detal.nickname = '微信用户'
+    user_detal.register_at = datetime.now()
 
     db.session.add(user_detal)
     db.session.commit()
@@ -191,4 +193,20 @@ def update_database():
         logger.info("update_database errorMsg= {} ".format(e))
     return True
 
-    
+
+def insert_new_order(params):
+    new_order = ActOrders()
+    new_order.user_id = params['user_id']
+    new_order.act_id = params['act_id']
+    new_order.count = params['count']
+    new_order.amount = params['count'] * params['price']
+    new_order.status = 0
+    new_order.created_at = datetime.now()
+
+    try:
+        db.session.add(new_order)
+        db.session.commit()
+    except OperationalError as e:
+        logger.info("insert_new_order errorMsg= {} ".format(e))
+        return False
+    return True

@@ -11,7 +11,7 @@ from flask import jsonify
 from run import app
 from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter, update_counterbyid
 from wxcloudrun.dao import query_all_valid_act, query_act_by_id, query_user_by_open_id, insert_user_detail
-from wxcloudrun.dao import query_user_by_id, query_orders_by_user_id, update_database
+from wxcloudrun.dao import query_user_by_id, query_orders_by_user_id, update_database, insert_new_order
 from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
 
@@ -239,12 +239,10 @@ def check_user_phone():
     params = request.get_json()
     if 'session_id' not in params:
         return make_err_response("missing session_id field")
-    session_id = params['params']
-    session_data = redis_client.hgetall(session_id)
-    if 'open_id' not in session_data:
-        return make_err_response("session data missing open_id field")
-    open_id = session_data['open_id']
-    user_info = query_user_by_open_id(open_id)
+    if 'user_id' not in params:
+        return make_err_response("missing session_id field")
+    user_id = params['user_id']
+    user_info = query_user_by_id(user_id)
     if user_info is None:
         return make_err_response("user does not exists")
     phone = user_info.phone_number
@@ -346,5 +344,23 @@ def update_user_name():
     if not update_database():
         return make_err_response("update database failed")
     redis_client.hset(session_id, "nickname", new_name)
+    return make_succ_response(1)
+
+
+@app.route('/buy_ticket', methods=['POST'])
+def buy_ticket():
+    params = request.get_json()
+    if 'user_id' not in params:
+        return make_err_response("missing user_id field")
+    if 'session_id' not in params:
+        return make_err_response("missing session_id field")
+    if 'act_id' not in params:
+        return make_err_response("missing act_id field")
+    params['count'] = 1
+    act = query_act_by_id(params["act_id"])
+    if act is None:
+        return make_err_response("invalid act")
+    if not insert_new_order(params, act):
+        return make_err_response("insert_new_order failed")
     return make_succ_response(1)
 
