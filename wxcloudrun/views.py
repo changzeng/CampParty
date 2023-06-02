@@ -272,7 +272,7 @@ def make_orders_act_join_res_dict(orders_act_join_res):
         if order.count is not None:
             res_item['count'] = order.count
         if act_detail.start_at is not None:
-            res_item['actStartAt'] = act_detail.start_at
+            res_item['actStartAt'] = act_detail.start_at.strftime("%Y%m%d %H:%M:%S")
         if act_detail.status is not None:
             res_item['actStatus'] = act_detail.status
         if act_detail.short_cut_url is not None:
