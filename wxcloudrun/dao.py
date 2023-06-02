@@ -171,6 +171,24 @@ def query_user_by_id(id):
 
 
 def query_orders_by_user_id(user_id):
-    orders_act_join_res = db.session.query(ActOrders, ActDetail).join(ActDetail, ActOrders.act_id == ActDetail.id).filter(ActOrders.user_id == user_id).order_by(ActOrders.created_at.desc()).limit(10).all()
-    return list(orders_act_join_res)
+    try:
+        orders_act_join_res = db.session.query(ActOrders, ActDetail).join(ActDetail, ActOrders.act_id == ActDetail.id).filter(ActOrders.user_id == user_id).order_by(ActOrders.created_at.desc()).limit(10).all()
+        return list(orders_act_join_res)
+    except Exception as e:
+        logger.info("query_orders_by_user_id errorMsg= {} ".format(e))
+    return []
+
+
+def update_database():
+    try:
+        db.session.flush()
+        db.session.commit()
+        return True
+    except OperationalError as e:
+        logger.info("update_database errorMsg= {} ".format(e))
+        return False
+    except Exception as e:
+        logger.info("update_database errorMsg= {} ".format(e))
+    return True
+
     

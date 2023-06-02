@@ -11,7 +11,7 @@ from flask import jsonify
 from run import app
 from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter, update_counterbyid
 from wxcloudrun.dao import query_all_valid_act, query_act_by_id, query_user_by_open_id, insert_user_detail
-from wxcloudrun.dao import query_user_by_id, query_orders_by_user_id
+from wxcloudrun.dao import query_user_by_id, query_orders_by_user_id, update_database
 from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
 
@@ -303,3 +303,24 @@ def get_user_profile():
     }
 
     return make_succ_response(res)
+
+
+@app.route('/update_user_avatar', methods=['POST'])
+def update_user_avatar():
+    params = request.get_json()
+    if 'user_id' not in params:
+        return make_err_response("missing user_id field")
+    if 'avatar_url' not in params:
+        return make_err_response("missing avatar_url field")
+    if 'session_id' not in params:
+        return make_err_response("missing session_id field")
+    user_id = params['user_id']
+    session_id = params['session_id']
+    avatar_url = params['avatar_url']
+    user_info = query_user_by_id(user_id)
+    if user_info is None:
+        return make_err_response("user is not valid")
+    user_info.avatar_url = avatar_url
+    update_database()
+    redis_client.hset(session_id, "avatar_url", avatar_url)
+    return make_succ_response(1)
