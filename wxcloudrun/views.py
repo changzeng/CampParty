@@ -325,3 +325,26 @@ def update_user_avatar():
         return make_err_response("update database failed")
     redis_client.hset(session_id, "avatar_url", avatar_url)
     return make_succ_response(1)
+
+
+@app.route('/update_user_name', methods=['POST'])
+def update_user_name():
+    params = request.get_json()
+    if 'user_id' not in params:
+        return make_err_response("missing user_id field")
+    if 'new_name' not in params:
+        return make_err_response("missing new_name field")
+    if 'session_id' not in params:
+        return make_err_response("missing session_id field")
+    user_id = params['user_id']
+    session_id = params['session_id']
+    new_name = params['new_name']
+    user_info = query_user_by_id(user_id)
+    if user_info is None:
+        return make_err_response("user is not valid")
+    user_info.nickname = new_name
+    if not update_database():
+        return make_err_response("update database failed")
+    redis_client.hset(session_id, "nickname", new_name)
+    return make_succ_response(1)
+
