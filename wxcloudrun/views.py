@@ -321,6 +321,7 @@ def update_user_avatar():
     if user_info is None:
         return make_err_response("user is not valid")
     user_info.avatar_url = avatar_url
-    update_database()
+    if not update_database():
+        return make_err_response("update database failed")
     redis_client.hset(session_id, "avatar_url", avatar_url)
     return make_succ_response(1)
