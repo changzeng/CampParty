@@ -171,10 +171,6 @@ def query_user_by_id(id):
 
 
 def query_orders_by_user_id(user_id):
-    try:
-        orders_act_join_res = db.session(ActOrders, UserDetail).join(UserDetail, ActOrders.user_id == UserDetail.id).filter(ActOrders.user_id == user_id).order_by(ActOrders.created_at.desc()).limit(10).all()
-        return list(orders_act_join_res)
-    except Exception as e:
-        logger.info("query_user_by_id errorMsg= {} ".format(e))
-    return []
+    orders_act_join_res = db.session(ActOrders, UserDetail).join(UserDetail, ActOrders.act_id == UserDetail.id).filter(ActOrders.user_id == user_id).order_by(ActOrders.created_at.desc()).limit(10).all()
+    return list(orders_act_join_res)
     
