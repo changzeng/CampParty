@@ -171,6 +171,6 @@ def query_user_by_id(id):
 
 
 def query_orders_by_user_id(user_id):
-    orders_act_join_res = db.session.query(ActOrders, UserDetail).join(UserDetail, ActOrders.act_id == UserDetail.id).filter(ActOrders.user_id == user_id).order_by(ActOrders.created_at.desc()).limit(10).all()
+    orders_act_join_res = db.session.query(ActOrders, ActDetail).join(ActDetail, ActOrders.act_id == ActDetail.id).filter(ActOrders.user_id == user_id).order_by(ActOrders.created_at.desc()).limit(10).all()
     return list(orders_act_join_res)
     
