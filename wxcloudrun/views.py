@@ -386,16 +386,17 @@ def decrypt_user_phone():
     if session_key is None or session_key == "" or len(session_key) == 0:
         return make_err_response("invalid session_key")
     try:
-        phone = utils.decrypt_data(encrypted_data, session_key, iv)
+        phone_data = utils.decrypt_data(encrypted_data, session_key, iv)
+        phone_data = json.loads(phone_data)
+        phone_number = phone_data['purePhoneNumber']
         user = query_user_by_id(user_id)
         if user is None:
             return make_err_response("invalid user")
-        user.phone_number = phone
+        user.phone_number = phone_number
         if not update_database():
             return make_err_response("update_database failed")
-        redis_client.hset(session_id, "phone_number", phone)
-        return make_succ_response({"res": 1, "phone": phone})
+        redis_client.hset(session_id, "phone_number", phone_number)
     except Exception as e:
         return make_err_response("decrypt data error")
-    return make_succ_response({"res": 1, "phone": phone})
+    return make_succ_response({"res": 1, "phone": phone_number})
 
