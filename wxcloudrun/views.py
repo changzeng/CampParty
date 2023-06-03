@@ -366,3 +366,28 @@ def buy_ticket():
         return make_err_response("insert_new_order failed")
     return make_succ_response(1)
 
+
+@app.route('/decrypt_user_phone', methods=['POST'])
+def decrypt_user_phone():
+    params = request.get_json()
+    if 'user_id' not in params:
+        return make_err_response("missing user_id field")
+    if 'session_id' not in params:
+        return make_err_response("missing session_id field")
+    if 'encrypted_data' not in params:
+        return make_err_response("missing encrypted_data field")
+    if 'iv' not in params:
+        return make_err_response("missing iv field")
+    user_id = params['user_id']
+    session_id = params['session_id']
+    encrypted_data = params['encrypted_data']
+    iv = params['iv']
+    session_key = redis_client.hget(session_id, "session_key")
+    if session_key is None or session_key == "" or len(session_key) == 0:
+        return make_err_response("invalid session_key")
+    try:
+        phone = utils.decrypt_data(encrypted_data, session_key, iv)
+    except Exception as e:
+        return make_err_response("decrypt data error")
+    return 1
+
