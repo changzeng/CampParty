@@ -394,7 +394,8 @@ def decrypt_user_phone():
         if not update_database():
             return make_err_response("update_database failed")
         redis_client.hset(session_id, "phone_number", phone)
+        return make_succ_response({"res": 1, "phone": phone})
     except Exception as e:
         return make_err_response("decrypt data error")
-    return make_succ_response(1)
+    return make_succ_response({"res": 1, "phone": phone})
 
