@@ -387,6 +387,13 @@ def decrypt_user_phone():
         return make_err_response("invalid session_key")
     try:
         phone = utils.decrypt_data(encrypted_data, session_key, iv)
+        user = query_user_by_id(user_id)
+        if user is None:
+            return make_err_response("invalid user")
+        user.phone_number = phone
+        if not update_database():
+            return make_err_response("update_database failed")
+        redis_client.hset(session_id, "phone_number", phone)
     except Exception as e:
         return make_err_response("decrypt data error")
     return make_succ_response(1)
