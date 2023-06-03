@@ -389,5 +389,5 @@ def decrypt_user_phone():
         phone = utils.decrypt_data(encrypted_data, session_key, iv)
     except Exception as e:
         return make_err_response("decrypt data error")
-    return 1
+    return make_succ_response(1)
 
