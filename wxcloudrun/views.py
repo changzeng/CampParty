@@ -193,7 +193,6 @@ def list_all_rec_acts():
 
 
 def make_act_details(act_details):
-    res = []
     for act, user, order in act_details:
         if user is None:
             continue
@@ -203,8 +202,8 @@ def make_act_details(act_details):
         res_item["isBuy"] = 1
         if order is None:
             res_item["isBuy"] = 0
-        res.append(res_item)
-    return res
+        return res_item
+    return dict()
 
 
 @app.route('/get_act_detail', methods=['POST'])
