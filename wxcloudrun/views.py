@@ -104,7 +104,10 @@ def make_user_info_dict(user_info):
         res['nickname'] = user_info.nickname
     if user_info.phone_number is not None:
         res['phone_number'] = user_info.phone_number
-        res['is_valid_phone_number'] = check_valid_phone_number(user_info.phone_number)
+        is_valid_phone_number = 0
+        if check_valid_phone_number(user_info.phone_number):
+            is_valid_phone_number = 1
+        res['is_valid_phone_number'] = is_valid_phone_number
     return res
 
 
