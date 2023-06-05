@@ -1,7 +1,9 @@
 import json
 import base64
+import pytz
 
 from Crypto.Cipher import AES
+from datetime import datetime
 
 
 def decrypt_data(encrypted_data, session_key, iv):
@@ -33,3 +35,8 @@ def dict_get_default(_dict, _key, _default_val):
     if _key not in _dict:
         return _default_val
     return _dict[_key]
+
+
+def get_shanghai_now():
+    tz = pytz.timezone('Asia/Shanghai')
+    return datetime.now(tz=tz)

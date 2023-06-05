@@ -57,13 +57,13 @@ def count():
             counter = Counters()
             counter.id = 1
             counter.count = 1
-            counter.created_at = datetime.now()
-            counter.updated_at = datetime.now()
+            counter.created_at = utils.get_shanghai_now()
+            counter.updated_at = utils.get_shanghai_now()
             insert_counter(counter)
         else:
             counter.id = 1
             counter.count += 1
-            counter.updated_at = datetime.now()
+            counter.updated_at = utils.get_shanghai_now()
             update_counterbyid(counter)
         return make_succ_response(counter.count)
 
@@ -134,7 +134,9 @@ def get_session_info():
     session_info_dict = {}
     if user_info is None:
         session_info_dict = {
-            "open_id": open_id
+            "open_id": open_id,
+            "register_from_id": utils.dict_get_default(params, 0),
+            "register_from_chn": utils.dict_get_default(params, "")
         }
         if insert_user_detail(session_info_dict) == False:
             return make_err_response("insert user detail faild")
@@ -180,8 +182,11 @@ def list_all_rec_acts():
     all_valid_acts = query_all_valid_act()
     def make_resp(_input):
         res = []
-        for item in _input:
-            res.append(convert_act_detail_info(item))
+        for act, user in _input:
+            res_item = convert_act_detail_info(act)
+            res_item["host_avatar_url"] = user.avatar_url
+            res_item["host_nick_name"] = user.nickname
+            res.append(res_item)
         return res
     return make_succ_response(make_resp(all_valid_acts))
 

@@ -1,5 +1,7 @@
 import logging
 
+import wxcloudrun.utils as utils
+
 from sqlalchemy.exc import OperationalError
 from datetime import datetime
 from wxcloudrun import db
@@ -69,7 +71,7 @@ def update_counterbyid(counter):
 
 def query_all_valid_act():
     try:
-        return ActDetail.query.filter(ActDetail.status == 1)
+        return db.session.query(ActDetail, UserDetail).join(UserDetail, ActDetail.host_id == UserDetail.id).filter(ActDetail.status == 1).all()
     except OperationalError as e:
         logger.info("query_all_valid_act errorMsg= {} ".format(e))
     return []
@@ -149,7 +151,11 @@ def insert_user_detail(user_detail_info):
         user_detal.nickname = user_detail_info['nickname']
     else:
         user_detal.nickname = '微信用户'
-    user_detal.register_at = datetime.now()
+    if 'register_from_id' in user_detail_info:
+        user_detal.register_from_id = user_detail_info['register_from_id']
+    if 'register_from_chn' in user_detail_info:
+        user_detal.register_from_chn = user_detail_info['register_from_chn']
+    user_detal.register_at = utils.get_shanghai_now()
 
     db.session.add(user_detal)
     db.session.commit()
@@ -200,7 +206,7 @@ def insert_new_order(params):
     new_order.count = params['count']
     new_order.amount = params['count'] * params['price']
     new_order.status = 0
-    new_order.created_at = datetime.now()
+    new_order.created_at = utils.get_shanghai_now()
 
     try:
         db.session.add(new_order)
