@@ -184,8 +184,8 @@ def list_all_rec_acts():
         res = []
         for act, user in _input:
             res_item = convert_act_detail_info(act)
-            res_item["host_avatar_url"] = user.avatar_url
-            res_item["host_nick_name"] = user.nickname
+            res_item["hostAvatarUrl"] = user.avatar_url
+            res_item["hostNickname"] = user.nickname
             res.append(res_item)
         return res
     return make_succ_response(make_resp(all_valid_acts))
