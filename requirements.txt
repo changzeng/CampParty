@@ -12,3 +12,4 @@ Werkzeug==2.0.2
 requests~=2.25.1
 redis~=4.5.5
 pycryptodome~=3.17
+pytz
