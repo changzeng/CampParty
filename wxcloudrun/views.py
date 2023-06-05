@@ -104,6 +104,7 @@ def make_user_info_dict(user_info):
         res['nickname'] = user_info.nickname
     if user_info.phone_number is not None:
         res['phone_number'] = user_info.phone_number
+        res['is_valid_phone_number'] = check_valid_phone_number(user_info.phone_number)
     return res
 
 
@@ -143,7 +144,11 @@ def get_session_info():
     redis_client.hset(session_id, mapping=session_info_dict)
     redis_client.expire(session_id, SESSION_EXPIRE_TS)
 
-    res_data = {"sessionID": session_id, "userID": user_info.id}
+    res_data = {
+        "sessionID": session_id,
+        "userID": user_info.id,
+        "isValidPhoneNumber": utils.dict_get_default(session_info_dict, "is_valid_phone_number", False)
+    }
     if utils.is_debug(params):
         res_data['openid'] = open_id
         res_data['sessionKey'] = session_key
