@@ -89,6 +89,14 @@ def query_act_by_id(id):
     return None
 
 
+def get_act_detail_by_id(id):
+    try:
+        return db.session.query(ActDetail, UserDetail, ActOrders).filter(ActDetail.id == id).join(UserDetail, ActDetail.host_id == UserDetail.id).join(ActOrders, UserDetail.id == ActOrders.user_id).all()
+    except OperationalError as e:
+        logger.info("query_all_valid_act errorMsg= {} ".format(e))
+    return []
+
+
 def query_all_act():
     """
     根据ID查询Counter实体

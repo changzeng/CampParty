@@ -12,6 +12,7 @@ from run import app
 from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter, update_counterbyid
 from wxcloudrun.dao import query_all_valid_act, query_act_by_id, query_user_by_open_id, insert_user_detail
 from wxcloudrun.dao import query_user_by_id, query_orders_by_user_id, update_database, insert_new_order
+from wxcloudrun.dao import get_act_detail_by_id
 from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
 
@@ -191,15 +192,30 @@ def list_all_rec_acts():
     return make_succ_response(make_resp(all_valid_acts))
 
 
+def make_act_details(act_details):
+    res = []
+    for act, user, order in act_details:
+        if user is None:
+            continue
+        res_item = convert_act_detail_info(act)
+        res_item["hostAvatarUrl"] = user.avatar_url
+        res_item["hostName"] = user.nickname
+        res_item["isBuy"] = 1
+        if order is None:
+            res_item["isBuy"] = 0
+        res.append(res_item)
+    return res
+
+
 @app.route('/get_act_detail', methods=['POST'])
 def get_act_detail():
     params = request.get_json()
     if 'id' not in params:
         return make_err_response("missing id field")
-    act_detail = query_act_by_id(int(params['id']))
-    if act_detail is None:
+    act_details = get_act_detail_by_id(int(params['id']))
+    if len(act_details) <= 0:
         return make_err_response("act detail missing")
-    return make_succ_response(convert_act_detail_info(act_detail))
+    return make_succ_response(make_act_details(act_details))
 
 
 def check_valid_phone_number(phone):
