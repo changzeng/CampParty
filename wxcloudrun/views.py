@@ -175,15 +175,15 @@ def convert_act_detail_info(item):
     if item.name is not None:
         res['name'] = item.name
     if item.price is not None:
-        res['price'] = item.price
+        res['price'] = float(item.price)
     if item.total_num is not None:
         res['totalNum'] = item.total_num
     if item.cur_num is not None:
         res['curNum'] = item.cur_num
     if item.start_at is not None:
-        res['startAt'] = item.start_at
+        res['startAt'] = item.start_at.strftime("%Y%m%d %H:%M:%S")
     if item.end_at is not None:
-        res['endAt'] = item.end_at
+        res['endAt'] = item.end_at.strftime("%Y%m%d %H:%M:%S")
     if item.post_url is not None:
         res['postUrl'] = item.post_url
     if item.short_cut_url is not None:
