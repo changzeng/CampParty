@@ -49,7 +49,7 @@ class ActDetail(db.Model):
     short_cut_url = db.Column(db.String, nullable=False)
 
 class UserDetail(db.Model):
-    __tablename__ = 'user_detail'
+    __tablename__ = 'user_detaile'
 
     id = db.Column(db.Integer, primary_key=True)
     open_id = db.Column(db.String, nullable=False)
