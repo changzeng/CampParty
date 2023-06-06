@@ -138,8 +138,8 @@ def get_session_info():
     if user_info is None:
         session_info_dict = {
             "open_id": open_id,
-            "register_from_id": utils.dict_get_default(params, 0),
-            "register_from_chn": utils.dict_get_default(params, "")
+            "register_from_id": utils.dict_get_default(params, "register_from_id", 0),
+            "register_from_chn": utils.dict_get_default(params, "register_from_id", "")
         }
         if insert_user_detail(session_info_dict) == False:
             return make_err_response("insert user detail faild")
