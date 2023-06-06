@@ -283,7 +283,9 @@ def check_user_phone():
 
 def make_orders_act_join_res_dict(orders_act_join_res):
     res = []
-    for order, act_detail in orders_act_join_res:
+    for order, act_detail, user_detail in orders_act_join_res:
+        if user_detail is None:
+            continue
         res_item = {}
         if order.id is not None:
             res_item['id'] = order.id
@@ -309,6 +311,8 @@ def make_orders_act_join_res_dict(orders_act_join_res):
             res_item['actName'] = act_detail.name
         if act_detail.loc is not None:
             res_item['actLoc'] = act_detail.loc
+        if user_detail.nickname is not None:
+            res_item['hostName'] = user_detail.nickname
         
         res.append(res_item)
     return res
