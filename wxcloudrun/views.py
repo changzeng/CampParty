@@ -109,6 +109,8 @@ def make_user_info_dict(user_info):
         if check_valid_phone_number(user_info.phone_number):
             is_valid_phone_number = 1
         res['is_valid_phone_number'] = is_valid_phone_number
+    if user_info.user_role is not None:
+        res['user_role'] = user_info.user_role
     return res
 
 
@@ -153,7 +155,8 @@ def get_session_info():
     res_data = {
         "sessionID": session_id,
         "userID": user_info.id,
-        "isValidPhoneNumber": utils.dict_get_default(session_info_dict, "is_valid_phone_number", False)
+        "isValidPhoneNumber": utils.dict_get_default(session_info_dict, "is_valid_phone_number", False),
+        "userRole": utils.dict_get_default(session_info_dict, "user_role", "")
     }
     if utils.is_debug(params):
         res_data['openid'] = open_id

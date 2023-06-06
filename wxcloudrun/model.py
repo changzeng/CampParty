@@ -4,6 +4,20 @@ from datetime import datetime
 from wxcloudrun import db
 
 
+# 老板
+USER_ROLE_BOOS = 1
+# 管理员
+USER_ROLE_ADMIN = 2
+# DM
+USER_ROLE_DM = 3
+# 设计师
+USER_ROLE_DESIGNER = 4
+# 推广员
+USER_ROLE_PROMOTER = 5
+# 活动负责人
+USER_ROLE_HOST = 6
+
+
 # 计数表
 class Counters(db.Model):
     # 设置结构体表格名称
@@ -51,6 +65,7 @@ class UserDetail(db.Model):
     register_at = db.Column(db.DateTime, nullable=False, default=datetime.now())
     register_from_id = db.Column(db.Integer, nullable=False, default=0)
     register_from_chn = db.Column(db.String, nullable=False, default="")
+    user_role = db.Column(db.String, nullable=True, default="")
 
 
 class ActOrders(db.Model):
