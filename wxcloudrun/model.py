@@ -39,7 +39,7 @@ class ActDetail(db.Model):
     host_id = db.Column(db.Integer, nullable=False)
     loc = db.Column(db.String, nullable=False)
     name = db.Column(db.String, nullable=False)
-    price = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Float, nullable=False)
     total_num = db.Column(db.Integer, nullable=False)
     cur_num = db.Column(db.Integer, nullable=True, default=0)
     start_at = db.Column(db.DateTime, nullable=False)
