@@ -165,20 +165,34 @@ def get_session_info():
 
 
 def convert_act_detail_info(item):
-    return {
-        "id": item.id,
-        "hostID": item.host_id,
-        "loc": item.loc,
-        "name": item.name,
-        "price": float(item.price),
-        "totalNum": item.total_num,
-        "curNum": item.cur_num,
-        "startAt": item.start_at.strftime("%Y%m%d %H:%M:%S"),
-        "endAt": item.end_at.strftime("%Y%m%d %H:%M:%S"),
-        "postUrl": item.post_url,
-        "shortCutUrl": item.short_cut_url,
-        "status": item.status
-    }
+    res = {}
+    if item.id is not None:
+        res['id'] = item.id
+    if item.host_id is not None:
+        res['hostID'] = item.host_id
+    if item.loc is not None:
+        res['loc'] = item.loc
+    if item.name is not None:
+        res['name'] = item.name
+    if item.price is not None:
+        res['price'] = item.price
+    if item.total_num is not None:
+        res['totalNum'] = item.total_num
+    if item.cur_num is not None:
+        res['curNum'] = item.cur_num
+    if item.start_at is not None:
+        res['startAt'] = item.start_at
+    if item.end_at is not None:
+        res['endAt'] = item.end_at
+    if item.post_url is not None:
+        res['postUrl'] = item.post_url
+    if item.short_cut_url is not None:
+        res['shortCutUrl'] = item.short_cut_url
+    if item.status is not None:
+        res['status'] = item.status
+    if item.need_group_purchase is not None:
+        res['needGroupPurchase'] = item.need_group_purchase
+    return res
 
 
 @app.route('/list_all_rec_acts', methods=['POST'])

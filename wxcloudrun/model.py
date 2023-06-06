@@ -47,6 +47,7 @@ class ActDetail(db.Model):
     post_url = db.Column(db.String, nullable=True)
     status = db.Column(db.Integer, nullable=False, default=0)
     short_cut_url = db.Column(db.String, nullable=False)
+    need_group_purchase = db.Column(db.Integer, nullable=True, default=0)
 
 class UserDetail(db.Model):
     __tablename__ = 'user_detail'
