@@ -207,12 +207,12 @@ def update_database():
     return True
 
 
-def insert_new_order(params):
+def insert_new_order(params, act):
     new_order = ActOrders()
     new_order.user_id = params['user_id']
     new_order.act_id = params['act_id']
     new_order.count = params['count']
-    new_order.amount = params['count'] * params['price']
+    new_order.amount = params['count'] * float(act.price)
     new_order.status = 0
     new_order.created_at = utils.get_shanghai_now()
 
