@@ -314,11 +314,16 @@ def check_user_info():
         return make_err_response("user does not exists")
     avatar_url = user_info.avatar_url
     nickname = user_info.nickname
+    res = {}
+    code = 0
     if nickname is None or nickname == DEFAULT_NICKNAME:
-        return make_succ_response(1)
-    if avatar_url is None or avatar_url == DEFAULT_AVATAR_URL:
-        return make_succ_response(2)
-    return make_succ_response(0)
+        code = 1
+    elif avatar_url is None or avatar_url == DEFAULT_AVATAR_URL:
+        code = 2
+    res['code'] = code
+    res['userName'] = user_info.nickname
+    res['userAvatarUrl'] = user_info.avatar_url
+    return make_succ_response(res)
 
 
 def make_orders_act_join_res_dict(orders_act_join_res):
