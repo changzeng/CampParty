@@ -26,6 +26,9 @@ redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PWD)
 SESSION_EXPIRE_TS = 2*7*24*3600
 SESSION_ID_PREFIX = 'session_id_'
 
+DEFAULT_NICKNAME = '微信用户'
+DEFAULT_AVATAR_URL = 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132'
+
 
 @app.route('/')
 def index():
@@ -295,6 +298,26 @@ def check_user_phone():
         make_succ_response(0)
     if check_valid_phone_number(str(phone)):
         return make_succ_response(1)
+    return make_succ_response(0)
+
+
+@app.route('/check_user_info', methods=['POST'])
+def check_user_info():
+    params = request.get_json()
+    if 'session_id' not in params:
+        return make_err_response("missing session_id field")
+    if 'user_id' not in params:
+        return make_err_response("missing session_id field")
+    user_id = params['user_id']
+    user_info = query_user_by_id(user_id)
+    if user_info is None:
+        return make_err_response("user does not exists")
+    avatar_url = user_info.avatar_url
+    nickname = user_info.nickname
+    if nickname is None or nickname == DEFAULT_NICKNAME:
+        return make_succ_response(1)
+    if avatar_url is None or avatar_url == DEFAULT_AVATAR_URL:
+        return make_succ_response(2)
     return make_succ_response(0)
 
 
