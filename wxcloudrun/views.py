@@ -314,13 +314,14 @@ def check_user_info():
         return make_err_response("user does not exists")
     avatar_url = user_info.avatar_url
     nickname = user_info.nickname
-    res = {}
-    code = 0
+    res = {
+        'isSetUserName': 0,
+        'isSetAvatarUrl': 0
+    }
     if nickname is None or nickname == DEFAULT_NICKNAME:
-        code = 1
+        res['isSetUserName'] = 1
     elif avatar_url is None or avatar_url == DEFAULT_AVATAR_URL:
-        code = 2
-    res['code'] = code
+        res['isSetAvatarUrl'] = 1
     res['userName'] = user_info.nickname
     res['userAvatarUrl'] = user_info.avatar_url
     return make_succ_response(res)
