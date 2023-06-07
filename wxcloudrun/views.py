@@ -315,13 +315,13 @@ def check_user_info():
     avatar_url = user_info.avatar_url
     nickname = user_info.nickname
     res = {
-        'isSetUserName': 0,
-        'isSetAvatarUrl': 0
+        'isSetUserName': 1,
+        'isSetAvatarUrl': 1
     }
     if nickname is None or nickname == DEFAULT_NICKNAME:
-        res['isSetUserName'] = 1
+        res['isSetUserName'] = 0
     elif avatar_url is None or avatar_url == DEFAULT_AVATAR_URL:
-        res['isSetAvatarUrl'] = 1
+        res['isSetAvatarUrl'] = 0
     res['userName'] = user_info.nickname
     res['userAvatarUrl'] = user_info.avatar_url
     return make_succ_response(res)
