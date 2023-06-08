@@ -501,10 +501,10 @@ def cancel_order():
     act = query_act_by_id(act_id)
     if act is None:
         return make_err_response("act not exists")
-    if act.cur_num > 0:
-        act.cur_num -= 1
     if order.user_id != user_id:
         return make_err_response("order not match user")
+    if act.cur_num > 0:
+        act.cur_num -= 1
     order.status = 1
     if update_database():
         return make_succ_response(1)
