@@ -446,9 +446,14 @@ def buy_ticket():
         return make_err_response("update act failed")
     if act is None:
         return make_err_response("invalid act")
-    if not insert_new_order(params, act):
+    new_order = insert_new_order(params, act)
+    if new_order is None:
         return make_err_response("insert_new_order failed")
-    return make_succ_response(1)
+    res = {
+        'code': 1,
+        'groupPurchaseID': new_order.group_purchase_id
+    }
+    return make_succ_response(res)
 
 
 @app.route('/decrypt_user_phone', methods=['POST'])
