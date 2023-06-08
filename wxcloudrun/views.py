@@ -12,7 +12,7 @@ from run import app
 from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter, update_counterbyid
 from wxcloudrun.dao import query_all_valid_act, query_act_by_id, query_user_by_open_id, insert_user_detail
 from wxcloudrun.dao import query_user_by_id, query_orders_by_user_id, update_database, insert_new_order
-from wxcloudrun.dao import get_act_detail_by_id
+from wxcloudrun.dao import get_act_detail_by_id, query_order_by_order_id
 from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
 
@@ -213,17 +213,18 @@ def list_all_rec_acts():
 
 
 def make_act_details(act_details):
+    res_item = {}
     for act, user, order in act_details:
         if user is None:
             continue
         res_item = convert_act_detail_info(act)
         res_item["hostAvatarUrl"] = user.avatar_url
         res_item["hostName"] = user.nickname
-        res_item["isBuy"] = 1
-        if order is None:
-            res_item["isBuy"] = 0
-        return res_item
-    return dict()
+        res_item["isBuy"] = 0
+        if order is not None and order.status == 0:
+            res_item["isBuy"] = 1
+            break
+    return res_item
 
 
 @app.route('/get_act_detail', methods=['POST'])
@@ -484,5 +485,20 @@ def decrypt_user_phone():
 
 @app.route('/cancel_order', methods=['POST'])
 def cancel_order():
-    pass
+    params = request.get_json()
+    if 'order_id' not in params:
+        return make_err_response("missing order_id field")
+    if 'user_id' not in params:
+        return make_err_response("missing user_id field")
+    user_id = params['user_id']
+    order_id = params['order_id']
+    order = query_order_by_order_id(order_id)
+    if order is None:
+        return make_err_response("order not exists")
+    if order.user_id != user_id:
+        return make_err_response("order not match user")
+    order.status = 1
+    if update_database():
+        return make_succ_response(1)
+    return make_succ_response(0)
 

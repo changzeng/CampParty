@@ -223,3 +223,25 @@ def insert_new_order(params, act):
         logger.info("insert_new_order errorMsg= {} ".format(e))
         return False
     return True
+
+
+def query_order_by_order_id(order_id):
+    try:
+        ordersList = ActOrders.query.filter(ActOrders.id == order_id)
+        ordersList = list(ordersList)
+        if len(ordersList) >= 1:
+            return ordersList[0]
+        return None
+    except Exception as e:
+        logger.info("query_order_by_order_id errorMsg= {} ".format(e))
+    return None
+
+
+def delete_item(item):
+    try:
+        db.session.delete(item)
+        db.session.commit()
+        return True
+    except OperationalError as e:
+        logger.info("delete_item errorMsg= {} ".format(e))
+    return False
