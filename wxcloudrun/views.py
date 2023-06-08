@@ -442,6 +442,9 @@ def buy_ticket():
         return make_err_response("invalid act")
     if not insert_new_order(params, act):
         return make_err_response("insert_new_order failed")
+    act.cur_num += 1
+    if not update_database():
+        return make_err_response("update act failed")
     return make_succ_response(1)
 
 
@@ -477,4 +480,9 @@ def decrypt_user_phone():
     except Exception as e:
         return make_err_response("decrypt data error")
     return make_succ_response({"res": 1, "phone": phone_number})
+
+
+@app.route('/cancel_order', methods=['POST'])
+def cancel_order():
+    pass
 
