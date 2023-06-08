@@ -439,13 +439,15 @@ def buy_ticket():
         return make_err_response("missing act_id field")
     params['count'] = 1
     act = query_act_by_id(params["act_id"])
+    act.cur_num += 1
+    if act.cur_num > act.total_num:
+        return make_succ_response(0)
+    if not update_database():
+        return make_err_response("update act failed")
     if act is None:
         return make_err_response("invalid act")
     if not insert_new_order(params, act):
         return make_err_response("insert_new_order failed")
-    act.cur_num += 1
-    if not update_database():
-        return make_err_response("update act failed")
     return make_succ_response(1)
 
 
