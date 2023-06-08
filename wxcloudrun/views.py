@@ -497,6 +497,12 @@ def cancel_order():
     order = query_order_by_order_id(order_id)
     if order is None:
         return make_err_response("order not exists")
+    act_id = order.act_id
+    act = query_act_by_id(act_id)
+    if act is None:
+        return make_err_response("act not exists")
+    if act.cur_num > 0:
+        act.cur_num -= 1
     if order.user_id != user_id:
         return make_err_response("order not match user")
     order.status = 1
