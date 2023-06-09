@@ -98,6 +98,14 @@ def get_act_detail_by_id(id):
     return []
 
 
+def query_orders_by_group_purchase_id(id):
+    try:
+        return db.session.query(ActOrders, UserDetail).filter(ActOrders.group_purchase_id == 1).filter(ActOrders.status == 0).join(UserDetail, ActOrders.user_id == UserDetail.id).all()
+    except OperationalError as e:
+        logger.info("query_orders_by_group_purchase_id errorMsg= {} ".format(e))
+    return []
+
+
 def query_all_act():
     """
     根据ID查询Counter实体

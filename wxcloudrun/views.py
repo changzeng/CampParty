@@ -12,7 +12,7 @@ from run import app
 from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter, update_counterbyid
 from wxcloudrun.dao import query_all_valid_act, query_act_by_id, query_user_by_open_id, insert_user_detail
 from wxcloudrun.dao import query_user_by_id, query_orders_by_user_id, update_database, insert_new_order
-from wxcloudrun.dao import get_act_detail_by_id, query_order_by_order_id
+from wxcloudrun.dao import get_act_detail_by_id, query_order_by_order_id, query_orders_by_group_purchase_id
 from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
 
@@ -227,15 +227,32 @@ def make_act_details(act_details):
     return res_item
 
 
+def make_group_purchase_info(group_purchase_info):
+    res = []
+    for order, user in group_purchase_info:
+        res_item = {
+            'groupUserName': user.nickname,
+            'groupUserAvatarUrl': user.avatar_url
+        }
+        res.append(res_item)
+    return res
+
+
 @app.route('/get_act_detail', methods=['POST'])
 def get_act_detail():
     params = request.get_json()
     if 'id' not in params:
         return make_err_response("missing id field")
     act_details = get_act_detail_by_id(int(params['id']))
+    group_purchase_info = []
+    if 'group_purchase_id' in params:
+        group_purchase_info = query_orders_by_group_purchase_id(params['group_purchase_id'])
     if len(act_details) <= 0:
         return make_err_response("act detail missing")
-    return make_succ_response(make_act_details(act_details))
+    return make_succ_response({
+        'act_info': make_act_details(act_details),
+        'group_purchase_info': make_group_purchase_info(group_purchase_info)
+        })
 
 
 def check_valid_phone_number(phone):
