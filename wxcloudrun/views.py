@@ -250,8 +250,8 @@ def get_act_detail():
     if len(act_details) <= 0:
         return make_err_response("act detail missing")
     return make_succ_response({
-        'act_info': make_act_details(act_details),
-        'group_purchase_info': make_group_purchase_info(group_purchase_info)
+        'actInfo': make_act_details(act_details),
+        'groupPurchaseInfo': make_group_purchase_info(group_purchase_info)
         })
 
 
