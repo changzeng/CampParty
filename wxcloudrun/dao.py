@@ -98,11 +98,19 @@ def get_act_detail_by_id(id):
     return []
 
 
-def query_orders_by_group_purchase_id(id):
+def query_group_purchase_info_by_id(id):
     try:
         return db.session.query(ActOrders, UserDetail).filter(ActOrders.group_purchase_id == id).filter(ActOrders.status == 0).join(UserDetail, ActOrders.user_id == UserDetail.id).all()
     except OperationalError as e:
-        logger.info("query_orders_by_group_purchase_id errorMsg= {} ".format(e))
+        logger.info("query_group_purchase_info_by_id errorMsg= {} ".format(e))
+    return []
+
+
+def query_group_purchase_info_by_user_act_id(user_id, act_id):
+    try:
+        return db.session.query(ActOrders, UserDetail).filter(ActOrders.user_id == user_id).filter(ActOrders.act_id == act_id).join(UserDetail, ActOrders.user_id == UserDetail.id).all()
+    except OperationalError as e:
+        logger.info("query_group_purchase_info_by_user_act_id errorMsg= {} ".format(e))
     return []
 
 
@@ -233,7 +241,7 @@ def insert_new_order(params, act):
     if group_purchase_id == 0:
         group_purchase_id = new_group_purchase_id(params)
     else:
-        group_purchase_orders = query_orders_by_group_purchase_id(group_purchase_id)
+        group_purchase_orders = query_group_purchase_info_by_id(group_purchase_id)
         if len(group_purchase_orders) >= 4:
             group_purchase_id = new_group_purchase_id(params)
     new_order.group_purchase_id = group_purchase_id
