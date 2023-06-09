@@ -241,6 +241,14 @@ def make_group_purchase_info(group_purchase_info):
     return res
 
 
+def get_group_purchase_id(info):
+    for order, user in info:
+        if order is None:
+            continue
+        return order.group_purchase_id
+    return 0
+
+
 @app.route('/get_act_detail', methods=['POST'])
 def get_act_detail():
     params = request.get_json()
@@ -257,11 +265,12 @@ def get_act_detail():
     group_purchase_info = query_group_purchase_info_by_user_act_id(user_id, act_id)
     if len(group_purchase_info) == 0 and group_purchase_id != 0:
         group_purchase_info = query_group_purchase_info_by_id(group_purchase_id)
+    group_purchase_id = get_group_purchase_id(group_purchase_info)
     return make_succ_response({
         "actInfo": make_act_details(act_details),
         "groupPurchaseInfo": make_group_purchase_info(group_purchase_info),
         "groupPurchaseID": group_purchase_id
-        })
+    })
 
 
 def check_valid_phone_number(phone):
