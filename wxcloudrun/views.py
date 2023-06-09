@@ -262,7 +262,8 @@ def get_act_detail():
         return make_err_response("act detail missing")
     return make_succ_response({
         'actInfo': make_act_details(act_details),
-        'groupPurchaseInfo': make_group_purchase_info(group_purchase_info)
+        'groupPurchaseInfo': make_group_purchase_info(group_purchase_info),
+        "groupPurchaseID": group_purchase_id
         })
 
 
@@ -478,8 +479,7 @@ def buy_ticket():
     if new_order is None:
         return make_err_response("insert_new_order failed")
     res = {
-        'code': 1,
-        'groupPurchaseID': new_order.group_purchase_id
+        'code': 1
     }
     return make_succ_response(res)
 
