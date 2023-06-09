@@ -260,11 +260,7 @@ def get_act_detail():
         group_purchase_info = query_orders_by_group_purchase_id(group_purchase_id)
     if len(act_details) <= 0:
         return make_err_response("act detail missing")
-    return make_succ_response({
-        'actInfo': make_act_details(act_details),
-        'groupPurchaseInfo': make_group_purchase_info(group_purchase_info),
-        "groupPurchaseID": group_purchase_id
-        })
+    return make_succ_response(make_act_details(act_details))
 
 
 def check_valid_phone_number(phone):
@@ -479,7 +475,8 @@ def buy_ticket():
     if new_order is None:
         return make_err_response("insert_new_order failed")
     res = {
-        'code': 1
+        'code': 1,
+        'groupPurchaseID': new_order.group_purchase_id
     }
     return make_succ_response(res)
 
