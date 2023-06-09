@@ -230,6 +230,8 @@ def make_act_details(act_details):
 def make_group_purchase_info(group_purchase_info):
     res = []
     for order, user in group_purchase_info:
+        if user is None:
+            continue
         res_item = {
             'groupUserName': user.nickname,
             'groupUserAvatarUrl': user.avatar_url
@@ -238,15 +240,24 @@ def make_group_purchase_info(group_purchase_info):
     return res
 
 
+def get_group_purchase_id(act_details):
+    for act, user, order in act_details:
+        if order is None:
+            continue
+        return order.group_purchase_id
+    return 0
+
+
 @app.route('/get_act_detail', methods=['POST'])
 def get_act_detail():
     params = request.get_json()
     if 'id' not in params:
         return make_err_response("missing id field")
     act_details = get_act_detail_by_id(int(params['id']))
+    group_purchase_id = get_group_purchase_id(act_details)
     group_purchase_info = []
-    if 'group_purchase_id' in params:
-        group_purchase_info = query_orders_by_group_purchase_id(params['group_purchase_id'])
+    if group_purchase_id != 0:
+        group_purchase_info = query_orders_by_group_purchase_id(group_purchase_id)
     if len(act_details) <= 0:
         return make_err_response("act detail missing")
     return make_succ_response({
