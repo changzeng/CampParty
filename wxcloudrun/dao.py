@@ -100,7 +100,7 @@ def get_act_detail_by_id(id):
 
 def query_orders_by_group_purchase_id(id):
     try:
-        return db.session.query(ActOrders, UserDetail).filter(ActOrders.group_purchase_id == 1).filter(ActOrders.status == 0).join(UserDetail, ActOrders.user_id == UserDetail.id).all()
+        return db.session.query(ActOrders, UserDetail).filter(ActOrders.group_purchase_id == id).filter(ActOrders.status == 0).join(UserDetail, ActOrders.user_id == UserDetail.id).all()
     except OperationalError as e:
         logger.info("query_orders_by_group_purchase_id errorMsg= {} ".format(e))
     return []
@@ -118,7 +118,7 @@ def query_all_act():
         logger.info("query_counterbyid errorMsg= {} ".format(e))
         return []
     return []
-    
+
 
 def insert_new_item(new_item):
     """
@@ -224,7 +224,7 @@ def insert_new_order(params, act):
     new_order.amount = params['count'] * act.price
     new_order.status = 0
     new_order.created_at = utils.get_shanghai_now()
-    new_order.group_purchase_id = hash(str(params['act_id'])+":"+str(params['user_id'])+":"+str(time.time()))
+    new_order.group_purchase_id = abs(hash(str(params['act_id'])+":"+str(params['user_id'])+":"+str(time.time())))
 
     try:
         db.session.add(new_order)
