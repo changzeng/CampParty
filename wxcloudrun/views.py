@@ -257,12 +257,12 @@ def get_act_detail():
     act_id = params['act_id']
     user_id = params['user_id']
     act_details = get_act_detail_by_id(act_id)
+    if len(act_details) <= 0:
+        return make_err_response("act detail missing")
     orders = query_orders_by_user_id_act_id(user_id, act_id)
     is_buy_act = 0
     if len(orders) > 0:
         is_buy_act = 1
-    if len(act_details) <= 0:
-        return make_err_response("act detail missing")
     if group_purchase_id == 0:
         group_purchase_id = get_group_purchase_id(orders)
     if group_purchase_id != 0:

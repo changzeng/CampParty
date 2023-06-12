@@ -100,9 +100,9 @@ def get_act_detail_by_id(act_id):
 
 def query_orders_by_user_id_act_id(user_id, act_id):
     try:
-        return ActOrders.query.filter(ActOrders.user_id == user_id, ActOrders.act_id == act_id, ActOrders.status == 0).all()
+        return ActOrders.query.filter(ActOrders.user_id == user_id).filter(ActOrders.act_id == act_id).filter(ActOrders.status == 0).all()
     except OperationalError as e:
-        logger.info("query_all_valid_act errorMsg= {} ".format(e))
+        logger.info("query_orders_by_user_id_act_id errorMsg= {} ".format(e))
     return []
 
 
