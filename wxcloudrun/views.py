@@ -13,6 +13,7 @@ from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter
 from wxcloudrun.dao import query_all_valid_act, query_act_by_id, query_user_by_open_id, insert_user_detail
 from wxcloudrun.dao import query_user_by_id, query_orders_by_user_id, update_database, insert_new_order
 from wxcloudrun.dao import get_act_detail_by_id, query_order_by_order_id, query_group_purchase_info_by_id
+from wxcloudrun.dao import query_orders_by_user_id_act_id
 from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
 
@@ -214,16 +215,12 @@ def list_all_rec_acts():
 
 def make_act_details(act_details):
     res_item = {}
-    for act, user, order in act_details:
+    for act, user in act_details:
         if user is None:
             continue
         res_item = convert_act_detail_info(act)
         res_item["hostAvatarUrl"] = user.avatar_url
         res_item["hostName"] = user.nickname
-        res_item["isBuy"] = 0
-        if order is not None and order.status == 0:
-            res_item["isBuy"] = 1
-            break
     return res_item
 
 
@@ -241,7 +238,7 @@ def make_group_purchase_info(group_purchase_info):
 
 
 def get_group_purchase_id(info):
-    for act, user, order in info:
+    for order in info:
         if order is None:
             continue
         return order.group_purchase_id
@@ -259,17 +256,22 @@ def get_act_detail():
     group_purchase_id = utils.dict_get_default(params, 'group_purchase_id', 0)
     act_id = params['act_id']
     user_id = params['user_id']
-    act_details = get_act_detail_by_id(int(act_id), int(user_id))
+    act_details = get_act_detail_by_id(act_id)
+    orders = query_orders_by_user_id_act_id(user_id, act_id)
+    is_buy_act = 0
+    if len(orders) > 0:
+        is_buy_act = 1
     if len(act_details) <= 0:
         return make_err_response("act detail missing")
     if group_purchase_id == 0:
-        group_purchase_id = get_group_purchase_id(act_details)
+        group_purchase_id = get_group_purchase_id(orders)
     if group_purchase_id != 0:
         group_purchase_info = query_group_purchase_info_by_id(int(group_purchase_id))
     return make_succ_response({
         "actInfo": make_act_details(act_details),
         "groupPurchaseInfo": make_group_purchase_info(group_purchase_info),
-        "groupPurchaseID": group_purchase_id
+        "groupPurchaseID": group_purchase_id,
+        "isBuyAct": is_buy_act
     })
 
 

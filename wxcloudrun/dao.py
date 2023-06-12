@@ -90,9 +90,17 @@ def query_act_by_id(id):
     return None
 
 
-def get_act_detail_by_id(act_id, user_id):
+def get_act_detail_by_id(act_id):
     try:
-        return db.session.query(ActDetail, UserDetail, ActOrders).filter(ActDetail.id == act_id).filter(ActOrders.user_id == user_id).join(UserDetail, ActDetail.host_id == UserDetail.id).outerjoin(ActOrders, UserDetail.id == ActOrders.user_id).all()
+        return db.session.query(ActDetail, UserDetail).filter(ActDetail.id == act_id).join(UserDetail, ActDetail.host_id == UserDetail.id).all()
+    except OperationalError as e:
+        logger.info("query_all_valid_act errorMsg= {} ".format(e))
+    return []
+
+
+def query_orders_by_user_id_act_id(user_id, act_id):
+    try:
+        return ActOrders.query.filter(ActOrders.user_id == user_id, ActOrders.act_id == act_id, ActOrders.status == 0).all()
     except OperationalError as e:
         logger.info("query_all_valid_act errorMsg= {} ".format(e))
     return []
