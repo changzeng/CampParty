@@ -354,9 +354,9 @@ def check_user_info():
         'isSetUserName': 1,
         'isSetAvatarUrl': 1
     }
-    if nickname is None or nickname == DEFAULT_NICKNAME:
+    if nickname is None or nickname == DEFAULT_NICKNAME or len(nickname) == 0:
         res['isSetUserName'] = 0
-    elif avatar_url is None or avatar_url == DEFAULT_AVATAR_URL:
+    elif avatar_url is None or avatar_url == DEFAULT_AVATAR_URL or len(avatar_url) == 0:
         res['isSetAvatarUrl'] = 0
     res['userName'] = user_info.nickname
     res['userAvatarUrl'] = user_info.avatar_url
