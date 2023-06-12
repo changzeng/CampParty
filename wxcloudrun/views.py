@@ -263,8 +263,10 @@ def get_act_detail():
     if len(act_details) <= 0:
         return make_err_response("act detail missing")
     group_purchase_info = query_group_purchase_info_by_user_act_id(user_id, act_id)
+    print("group_purchase_id1: ", group_purchase_id, len(group_purchase_info), sep=" ")
     if len(group_purchase_info) == 0 and group_purchase_id != 0:
         group_purchase_info = query_group_purchase_info_by_id(group_purchase_id)
+    print("group_purchase_id2: ", group_purchase_id, len(group_purchase_info), sep=" ")
     group_purchase_id = get_group_purchase_id(group_purchase_info)
     return make_succ_response({
         "actInfo": make_act_details(act_details),
