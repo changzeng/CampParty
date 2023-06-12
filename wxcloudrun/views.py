@@ -13,7 +13,6 @@ from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter
 from wxcloudrun.dao import query_all_valid_act, query_act_by_id, query_user_by_open_id, insert_user_detail
 from wxcloudrun.dao import query_user_by_id, query_orders_by_user_id, update_database, insert_new_order
 from wxcloudrun.dao import get_act_detail_by_id, query_order_by_order_id, query_group_purchase_info_by_id
-from wxcloudrun.dao import query_group_purchase_info_by_user_act_id
 from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
 
@@ -242,7 +241,7 @@ def make_group_purchase_info(group_purchase_info):
 
 
 def get_group_purchase_id(info):
-    for order, user in info:
+    for act, user, order in info:
         if order is None:
             continue
         return order.group_purchase_id
@@ -256,18 +255,17 @@ def get_act_detail():
         return make_err_response("missing act_id field")
     if 'user_id' not in params:
         return make_err_response("missing user_id field")
+    group_purchase_info = []
     group_purchase_id = utils.dict_get_default(params, 'group_purchase_id', 0)
     act_id = params['act_id']
     user_id = params['user_id']
-    act_details = get_act_detail_by_id(int(act_id))
+    act_details = get_act_detail_by_id(int(act_id), int(user_id))
     if len(act_details) <= 0:
         return make_err_response("act detail missing")
-    group_purchase_info = query_group_purchase_info_by_user_act_id(user_id, act_id)
-    print("group_purchase_id1: ", group_purchase_id, len(group_purchase_info), sep=" ")
-    if len(group_purchase_info) == 0 and group_purchase_id != 0:
-        group_purchase_info = query_group_purchase_info_by_id(group_purchase_id)
-    print("group_purchase_id2: ", group_purchase_id, len(group_purchase_info), sep=" ")
-    group_purchase_id = get_group_purchase_id(group_purchase_info)
+    if group_purchase_id == 0:
+        group_purchase_id = get_group_purchase_id(act_details)
+    if group_purchase_id != 0:
+        group_purchase_info = query_group_purchase_info_by_id(int(group_purchase_id))
     return make_succ_response({
         "actInfo": make_act_details(act_details),
         "groupPurchaseInfo": make_group_purchase_info(group_purchase_info),
