@@ -104,9 +104,9 @@ def query_orders_by_user_id_act_id(user_id, act_id):
     return []
 
 
-def query_group_purchase_info_by_id(id):
+def query_group_purchase_info_by_id(id, act_id):
     try:
-        return db.session.query(ActOrders, UserDetail).filter(ActOrders.group_purchase_id == id).filter(ActOrders.status == 0).order_by(ActOrders.created_at.desc()).join(UserDetail, ActOrders.user_id == UserDetail.id).all()
+        return db.session.query(ActOrders, UserDetail).filter(ActOrders.group_purchase_id == id).filter(ActOrders.act_id == act_id).filter(ActOrders.status == 0).order_by(ActOrders.created_at.desc()).join(UserDetail, ActOrders.user_id == UserDetail.id).all()
     except OperationalError as e:
         logger.info("query_group_purchase_info_by_id errorMsg= {} ".format(e))
     return []

@@ -256,7 +256,7 @@ def get_act_detail():
         return make_err_response("missing user_id field")
     group_purchase_info = []
     group_purchase_id = utils.dict_get_default(params, 'group_purchase_id', 0)
-    act_id = params['act_id']
+    act_id = int(params['act_id'])
     user_id = params['user_id']
     act_details = get_act_detail_by_id(act_id)
     if len(act_details) <= 0:
@@ -269,7 +269,7 @@ def get_act_detail():
     if self_group_purchase_id != 0:
         group_purchase_id = self_group_purchase_id
     if group_purchase_id != 0:
-        group_purchase_info = query_group_purchase_info_by_id(int(group_purchase_id))
+        group_purchase_info = query_group_purchase_info_by_id(int(group_purchase_id), act_id)
     return make_succ_response({
         "actInfo": make_act_details(act_details),
         "groupPurchaseInfo": make_group_purchase_info(group_purchase_info),
