@@ -239,7 +239,7 @@ def insert_new_order(params, act):
     if group_purchase_id == 0:
         group_purchase_id = new_group_purchase_id(params)
     else:
-        group_purchase_orders = query_group_purchase_info_by_id(group_purchase_id)
+        group_purchase_orders = query_group_purchase_info_by_id(group_purchase_id, int(params['act_id']))
         if len(group_purchase_orders) >= 4:
             group_purchase_id = new_group_purchase_id(params)
     new_order.group_purchase_id = group_purchase_id
