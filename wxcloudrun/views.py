@@ -491,7 +491,7 @@ def buy_ticket():
         return make_err_response("insert_new_order failed")
     res = {
         'code': 1,
-        'groupPurchaseID': new_order.group_purchase_id
+        'groupPurchaseID': str(new_order.group_purchase_id)
     }
     return make_succ_response(res)
 

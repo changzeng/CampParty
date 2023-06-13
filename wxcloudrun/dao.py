@@ -236,14 +236,12 @@ def insert_new_order(params, act):
     new_order.created_at = utils.get_shanghai_now()
 
     group_purchase_id = int(utils.dict_get_default(params, 'group_purchase_id', 0))
-    logger.info("input group_purchase_id: {0}".format(group_purchase_id))
     if group_purchase_id == 0:
         group_purchase_id = new_group_purchase_id(params)
     else:
         group_purchase_orders = query_group_purchase_info_by_id(group_purchase_id, int(params['act_id']))
         if len(group_purchase_orders) >= 4:
             group_purchase_id = new_group_purchase_id(params)
-    logger.info("final group_purchase_id: {0}".format(group_purchase_id))
     new_order.group_purchase_id = group_purchase_id
 
     try:
