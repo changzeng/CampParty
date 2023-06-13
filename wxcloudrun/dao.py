@@ -6,6 +6,7 @@ import wxcloudrun.utils as utils
 from sqlalchemy.exc import OperationalError
 from datetime import datetime
 from wxcloudrun import db
+from wxcloudrun.utils import logger
 from wxcloudrun.model import Counters
 from wxcloudrun.model import ActDetail
 from wxcloudrun.model import UserDetail
@@ -107,6 +108,10 @@ def query_orders_by_user_id_act_id(user_id, act_id):
 
 
 def query_group_purchase_info_by_id(id):
+    a = db.session.query(ActOrders, UserDetail).filter(ActOrders.group_purchase_id == id).all()
+    b = db.session.query(ActOrders, UserDetail).filter(ActOrders.group_purchase_id == id).filter(ActOrders.status == 0).order_by(ActOrders.created_at.desc()).all()
+    c = db.session.query(ActOrders, UserDetail).filter(ActOrders.group_purchase_id == id).filter(ActOrders.status == 0).order_by(ActOrders.created_at.desc()).join(UserDetail, ActOrders.user_id == UserDetail.id).all()
+    logger.info("query_group_purchase_info_by_id. a length: {0}, b length: {1}, c length: {2}".format(len(a), len(b), len(c)))
     try:
         return db.session.query(ActOrders, UserDetail).filter(ActOrders.group_purchase_id == id).filter(ActOrders.status == 0).order_by(ActOrders.created_at.desc()).join(UserDetail, ActOrders.user_id == UserDetail.id).all()
     except OperationalError as e:

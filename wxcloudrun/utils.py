@@ -1,9 +1,21 @@
 import json
 import base64
 import pytz
+import logging
+import os
 
 from Crypto.Cipher import AES
 from datetime import datetime
+
+
+file_path = os.path.abspath(os.path.dirname(__file__)) + '/app.log'
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler = logging.FileHandler(file_path)
+handler.setLevel(logging.INFO)
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 
 def decrypt_data(encrypted_data, session_key, iv):
