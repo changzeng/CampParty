@@ -268,7 +268,6 @@ def get_act_detail():
         group_purchase_id = get_group_purchase_id(orders)
     if group_purchase_id != 0:
         group_purchase_info = query_group_purchase_info_by_id(int(group_purchase_id))
-    logger.info("group_purchase_id: {0}".format(group_purchase_id))
     return make_succ_response({
         "actInfo": make_act_details(act_details),
         "groupPurchaseInfo": make_group_purchase_info(group_purchase_info),
