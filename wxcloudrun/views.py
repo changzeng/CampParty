@@ -270,7 +270,7 @@ def get_act_detail():
     return make_succ_response({
         "actInfo": make_act_details(act_details),
         "groupPurchaseInfo": make_group_purchase_info(group_purchase_info),
-        "groupPurchaseID": group_purchase_id,
+        "groupPurchaseID": str(group_purchase_id),
         "isBuyAct": is_buy_act
     })
 

@@ -105,11 +105,6 @@ def query_orders_by_user_id_act_id(user_id, act_id):
 
 
 def query_group_purchase_info_by_id(id):
-    a = db.session.query(ActOrders, UserDetail).filter(ActOrders.group_purchase_id == id).all()
-    b = db.session.query(ActOrders, UserDetail).filter(ActOrders.group_purchase_id == id).filter(ActOrders.status == 0).order_by(ActOrders.created_at.desc()).all()
-    c = db.session.query(ActOrders, UserDetail).filter(ActOrders.group_purchase_id == id).filter(ActOrders.status == 0).order_by(ActOrders.created_at.desc()).join(UserDetail, ActOrders.user_id == UserDetail.id).all()
-    e = db.session.query(ActOrders, UserDetail).all()
-    logger.info("query_group_purchase_info_by_id. a length: {0}, b length: {1}, c length: {2}, e length: {5}, group_purchase_id: {3}, type: {4}".format(len(a), len(b), len(c), id, type(id), len(e)))
     try:
         return db.session.query(ActOrders, UserDetail).filter(ActOrders.group_purchase_id == id).filter(ActOrders.status == 0).order_by(ActOrders.created_at.desc()).join(UserDetail, ActOrders.user_id == UserDetail.id).all()
     except OperationalError as e:
