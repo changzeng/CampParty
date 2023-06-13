@@ -264,8 +264,9 @@ def get_act_detail():
     is_buy_act = 0
     if len(orders) > 0:
         is_buy_act = 1
-    if group_purchase_id == 0:
-        group_purchase_id = get_group_purchase_id(orders)
+    self_group_purchase_id = get_group_purchase_id(orders)
+    if self_group_purchase_id != 0:
+        group_purchase_id = self_group_purchase_id
     if group_purchase_id != 0:
         group_purchase_info = query_group_purchase_info_by_id(int(group_purchase_id))
     return make_succ_response({
