@@ -12,9 +12,6 @@ from wxcloudrun.model import ActDetail
 from wxcloudrun.model import UserDetail
 from wxcloudrun.model import ActOrders
 
-# 初始化日志
-logger = logging.getLogger('log')
-
 
 def query_counterbyid(id):
     """
