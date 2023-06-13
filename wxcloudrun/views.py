@@ -14,11 +14,12 @@ from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter
 from wxcloudrun.dao import query_all_valid_act, query_act_by_id, query_user_by_open_id, insert_user_detail
 from wxcloudrun.dao import query_user_by_id, query_orders_by_user_id, update_database, insert_new_order
 from wxcloudrun.dao import get_act_detail_by_id, query_order_by_order_id, query_group_purchase_info_by_id
-from wxcloudrun.dao import query_orders_by_user_id_act_id
+from wxcloudrun.dao import query_orders_by_user_id_act_id, query_last_month_all_valid_orders_by_user_id
 from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
 
 
+FREE_GROUP_PURCHASE_CNT = 2
 APPID = 'wx751ba538e01e40f6'
 SECRET = 'ee7eb9b1076e81941817e84d2f95a8db'
 REDIS_HOST = 'r-8vb77upzev9wod2p2dpd.redis.zhangbei.rds.aliyuncs.com'
@@ -553,4 +554,19 @@ def cancel_order():
     if update_database():
         return make_succ_response(1)
     return make_succ_response(0)
+
+
+@app.route('/get_remained_group_purchase_cnt', methods=['POST'])
+def get_remained_group_purchase_cnt():
+    params = request.get_json()
+    if 'user_id' not in params:
+        return make_err_response("missing user_id field")
+    user_id = int(params['user_id'])
+    orders = query_last_month_all_valid_orders_by_user_id(int(user_id))
+    user = query_user_by_id(user_id)
+    cnt = user.group_purchase_cnt + FREE_GROUP_PURCHASE_CNT - len(orders)
+    return make_succ_response({
+        "status": 0,
+        "cnt": cnt
+    })
 

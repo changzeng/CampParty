@@ -67,6 +67,7 @@ class UserDetail(db.Model):
     register_from_id = db.Column(db.Integer, nullable=False, default=0)
     register_from_chn = db.Column(db.String, nullable=False, default="")
     user_role = db.Column(db.String, nullable=True, default="")
+    group_purchase_cnt = db.Column(db.Integer, nullable=False, default=0)
 
 
 class ActOrders(db.Model):

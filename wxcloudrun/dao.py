@@ -190,10 +190,10 @@ def insert_user_detail(user_detail_info):
 
 def query_user_by_id(id):
     try:
-        actList = UserDetail.query.filter(UserDetail.id == id)
-        actList = list(actList)
-        if len(actList) >= 1:
-            return actList[0]
+        users = UserDetail.query.filter(UserDetail.id == id)
+        users = list(users)
+        if len(users) >= 1:
+            return users[0]
         return None
     except Exception as e:
         logger.info("query_user_by_id errorMsg= {} ".format(e))
@@ -235,7 +235,7 @@ def insert_new_order(params, act):
     new_order.status = 0
     new_order.created_at = utils.get_shanghai_now()
 
-    group_purchase_id = utils.dict_get_default(params, 'group_purchase_id', 0)
+    group_purchase_id = int(utils.dict_get_default(params, 'group_purchase_id', 0))
     if group_purchase_id == 0:
         group_purchase_id = new_group_purchase_id(params)
     else:
@@ -273,3 +273,13 @@ def delete_item(item):
     except OperationalError as e:
         logger.info("delete_item errorMsg= {} ".format(e))
     return False
+
+
+def query_last_month_all_valid_orders_by_user_id(user_id):
+    try:
+        end = datetime.now()
+        start = end - datetime.timedelta(days=30)
+        return ActOrders.query.filter(ActOrders.user_id == user_id).filter(ActOrders.status == 0).filter(ActOrders.created_at.between(start, end)).all()
+    except OperationalError as e:
+        logger.info("query_last_month_all_valid_orders_by_user_id errorMsg= {} ".format(e))
+    return []
